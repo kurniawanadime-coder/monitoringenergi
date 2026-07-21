@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 5. Setup MQTT HiveMQ
   const brokerUrl = "broker.hivemq.com";
-  const brokerPort = 8000;
+  const brokerPort = 8884;
   const clientId = "dashboard-client-" + Math.random().toString(16).substr(2, 8);
   const mainTopic = "cuaca/adi/all"; // Topik gabungan baru
   let mqttClient;
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     mqttClient.connect({
       onSuccess: onConnect,
-      useSSL: false
+      useSSL: true
     });
   } catch (e) { console.error("MQTT Error:", e); }
 
