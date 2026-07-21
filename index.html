@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Environment Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Include Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons for aesthetic modern icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Chart.js for area chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <canvas id="weatherCanvas" class="weather-canvas"></canvas>
+  <div class="dashboard-container">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="profile">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4" alt="User"
+          class="avatar">
+        <span class="username">Admin</span>
+      </div>
+      <ul class="nav-links">
+        <li class="active"><i class="ph ph-house"></i></li>
+        <li><i class="ph ph-shield-check"></i></li>
+        <li><i class="ph ph-chart-bar"></i></li>
+        <li><i class="ph ph-user"></i></li>
+        <li><i class="ph ph-device-mobile"></i></li>
+      </ul>
+      <div class="logout">
+        <i class="ph ph-sign-out"></i>
+      </div>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <main class="main-grid">
+
+      <!-- COLUMN 1: Image & Chart -->
+      <section class="col col-1">
+        <!-- Top Image Card -->
+        <div class="card image-card">
+          <img src="assets/weather_card.png" alt="Atmosphere" class="bg-image">
+          <div class="image-card-overlay">
+            <div class="overlay-content">
+              <div class="icon-circle"><i class="ph ph-sun"></i></div>
+              <p>Stasiun Pemantauan Cuaca<br><small>Update otomatis</small></p>
+              <i class="ph ph-arrow-right arrow-btn"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Satellite Data Grid (Replaced Radiasi Matahari Chart) -->
+        <div class="card sat-container" style="margin-top: 15px;">
+          <div class="card-header"
+            style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 16px; font-weight: 600; margin: 0;">Data Satelit</h3>
+            <i class="ph ph-satellite" style="color: var(--text-secondary); font-size: 18px;"></i>
+          </div>
+          <div class="sat-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;">
+            <div class="sat-card"
+              style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; grid-column: span 2; align-items: center; text-align: center;">
+              <div
+                style="font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin-bottom: 5px; position: relative; z-index: 2;">
+                <i class="ph-fill ph-sun" style="color: #ffb703;"></i> Radiasi Matahari
+              </div>
+              <div id="sat-rad" style="font-size: 20px; font-weight: 700; position: relative; z-index: 2; color: #fff;">
+                --<small
+                  style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">W/m²</small>
+              </div>
+              <div style="position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: var(--text-secondary);">
+                <i class="ph-bold ph-trend-up" style="color: #06d6a0;"></i>
+              </div>
+            </div>
+
+            <div class="sat-card"
+              style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
+              <div
+                style="font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin-bottom: 5px; position: relative; z-index: 2;">
+                <i class="ph-fill ph-thermometer" style="color: #f72585;"></i> Suhu (Sat)
+              </div>
+              <div id="sat-temp" style="font-size: 20px; font-weight: 700; position: relative; z-index: 2;">--<small
+                  style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">°C</small>
+              </div>
+              <div style="position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: var(--text-secondary);">
+                <i class="ph-bold ph-trend-up" style="color: #06d6a0;"></i>
+              </div>
+            </div>
+
+            <div class="sat-card"
+              style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
+              <div
+                style="font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin-bottom: 5px; position: relative; z-index: 2;">
+                <i class="ph-fill ph-drop" style="color: #4cc9f0;"></i> Kelembapan
+              </div>
+              <div id="sat-humidity" style="font-size: 20px; font-weight: 700; position: relative; z-index: 2;">--<small
+                  style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">%</small>
+              </div>
+              <div style="position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: var(--text-secondary);">
+                <i class="ph-bold ph-trend-down" style="color: #f72585;"></i>
+              </div>
+            </div>
+
+            <div class="sat-card"
+              style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
+              <div
+                style="font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin-bottom: 5px; position: relative; z-index: 2;">
+                <i class="ph-fill ph-wind" style="color: #06d6a0;"></i> Kec. Angin
+              </div>
+              <div id="sat-windspeed" style="font-size: 20px; font-weight: 700; position: relative; z-index: 2;">
+                --<small
+                  style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">m/s</small>
+              </div>
+              <div style="position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: var(--text-secondary);">
+                <i class="ph-bold ph-trend-up" style="color: #06d6a0;"></i>
+              </div>
+            </div>
+
+            <div class="sat-card"
+              style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
+              <div
+                style="font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin-bottom: 5px; position: relative; z-index: 2;">
+                <i class="ph-fill ph-navigation-arrow" style="color: #8b5cf6;"></i> Arah Angin
+              </div>
+              <div id="sat-winddir" style="font-size: 20px; font-weight: 700; position: relative; z-index: 2;">--<small
+                  style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">°</small>
+              </div>
+              <div style="position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: var(--text-secondary);">
+                <i class="ph-bold ph-minus"></i>
+              </div>
+            </div>
+
+            <div class="sat-card"
+              style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
+              <div
+                style="font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin-bottom: 5px; position: relative; z-index: 2;">
+                <i class="ph-fill ph-arrows-in" style="color: #fca311;"></i> Tekanan
+              </div>
+              <div id="sat-pressure" style="font-size: 20px; font-weight: 700; position: relative; z-index: 2;">--<small
+                  style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">kPa</small>
+              </div>
+              <div style="position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: var(--text-secondary);">
+                <i class="ph-bold ph-minus"></i>
+              </div>
+            </div>
+
+            <div class="sat-card"
+              style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
+              <div
+                style="font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; margin-bottom: 5px; position: relative; z-index: 2;">
+                <i class="ph-fill ph-cloud-rain" style="color: #4cc9f0;"></i> Curah Hujan
+              </div>
+              <div id="sat-rain" style="font-size: 20px; font-weight: 700; position: relative; z-index: 2;">--<small
+                  style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">mm</small>
+              </div>
+              <div style="position: absolute; bottom: 8px; right: 10px; font-size: 10px; color: var(--text-secondary);">
+                <i class="ph-bold ph-minus"></i>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Analisis Akurasi (Delta) -->
+        <div class="card delta-card"
+          style="margin-top: auto; background: linear-gradient(145deg, rgba(30,30,45,0.9), rgba(20,20,30,0.9)); border-left: 3px solid var(--accent-pink);">
+          <div class="card-header"
+            style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-size: 16px; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 8px;">
+              <i class="ph-fill ph-target" style="color: var(--accent-pink);"></i> Analisis Deviasi
+            </h3>
+            <span
+              style="font-size: 11px; padding: 4px 10px; background: rgba(247, 37, 133, 0.15); color: var(--accent-pink); border-radius: 12px; font-weight: 500;">Sensor
+              vs Satelit</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Delta Radiasi -->
+            <div
+              style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div
+                  style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 183, 3, 0.15); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--accent-orange);">
+                  <i class="ph-fill ph-sun"></i>
+                </div>
+                <div>
+                  <div style="font-size: 14px; color: var(--text-secondary); font-weight: 500;">Radiasi Matahari</div>
+                  <div id="delta-rad-desc" style="font-size: 12px; margin-top: 4px; color: #fff;">Menghitung...</div>
+                </div>
+              </div>
+              <div id="delta-rad-val" style="font-size: 20px; font-weight: 700; font-family: monospace;">--</div>
+            </div>
+
+            <!-- Delta Kecepatan Angin -->
+            <div
+              style="background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div
+                  style="width: 36px; height: 36px; border-radius: 50%; background: rgba(6, 214, 160, 0.15); display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--accent-green);">
+                  <i class="ph-fill ph-wind"></i>
+                </div>
+                <div>
+                  <div style="font-size: 14px; color: var(--text-secondary); font-weight: 500;">Kecepatan Angin</div>
+                  <div id="delta-wind-desc" style="font-size: 12px; margin-top: 4px; color: #fff;">Menghitung...</div>
+                </div>
+              </div>
+              <div id="delta-wind-val" style="font-size: 20px; font-weight: 700; font-family: monospace;">--</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUMN 2: Weather Info -->
+      <section class="col col-2">
+        <div class="card weather-main-card">
+          <!-- New Design Top Bar -->
+          <div class="w-top-bar"
+            style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-bottom: 20px; width: 100%;">
+            <div></div>
+            <div class="w-location"
+              style="background: #8b5cf6; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);">
+              <i class="ph-fill ph-map-pin"></i> <span id="loc-name">Memuat...</span>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+              <div class="w-toggle"
+                style="display: flex; background: rgba(0,0,0,0.4); border-radius: 20px; padding: 4px;">
+                <div style="padding: 2px 10px; font-size: 11px; color: rgba(255,255,255,0.5); cursor: pointer;">F</div>
+                <div
+                  style="padding: 2px 10px; font-size: 11px; background: #fff; color: #000; border-radius: 16px; font-weight: 600; cursor: pointer;">
+                  C</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- New Design Content -->
+          <div class="w-main-content"
+            style="display: flex; justify-content: space-between; position: relative; width: 100%;">
+            <i class="ph-fill ph-cloud"
+              style="position: absolute; top: -10px; left: 100px; opacity: 0.05; font-size: 80px;"></i>
+            <i class="ph-fill ph-cloud"
+              style="position: absolute; bottom: -20px; left: 40%; opacity: 0.03; font-size: 120px;"></i>
+
+            <div class="w-left"
+              style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; text-align: left;">
+              <div style="margin-top: 10px;">
+                <div id="w-day-name" style="font-size: 26px; font-weight: 500; line-height: 1.2;">Monday</div>
+                <div id="w-date-full" style="font-size: 11px; color: var(--text-secondary);">24 Dec, 2023</div>
+              </div>
+              <div>
+                <div
+                  style="font-size: 48px; font-weight: 400; line-height: 1; letter-spacing: -2px; margin-bottom: 5px; margin-top: 10px;"
+                  id="hero-temp">32°C</div>
+                <div style="font-size: 10px; color: var(--text-secondary);">High: 34 Low: 22</div>
+              </div>
+            </div>
+            <div class="w-right"
+              style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; text-align: right;">
+              <div style="margin-top: -15px;">
+                <!-- Perfectly Designed Geometric Weather Icon -->
+                <svg viewBox="0 0 120 110" style="width: 140px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));">
+                  <!-- Sun & Rays -->
+                  <g transform="translate(75, 45)">
+                    <!-- Rays -->
+                    <g stroke="#ffb703" stroke-width="3" stroke-linecap="round">
+                      <line x1="0" y1="-23" x2="0" y2="-28" />
+                      <line x1="0" y1="23" x2="0" y2="28" />
+                      <line x1="-23" y1="0" x2="-28" y2="0" />
+                      <line x1="23" y1="0" x2="28" y2="0" />
+                      <line x1="-16" y1="-16" x2="-20" y2="-20" />
+                      <line x1="16" y1="16" x2="20" y2="20" />
+                      <line x1="-16" y1="16" x2="-20" y2="20" />
+                      <line x1="16" y1="-16" x2="20" y2="-20" />
+                    </g>
+                    <!-- Sun Body -->
+                    <circle cx="0" cy="0" r="18" fill="#ffb703" filter="drop-shadow(0 0 8px rgba(255,183,3,0.5))" />
+                  </g>
+
+                  <!-- Dark Cloud -->
+                  <g fill="#787d8c" opacity="0.95">
+                    <circle cx="35" cy="65" r="14" />
+                    <circle cx="55" cy="50" r="20" />
+                    <circle cx="75" cy="65" r="14" />
+                    <rect x="35" y="55" width="40" height="24" />
+                  </g>
+
+                  <!-- Transparent Glass Cloud Overlay -->
+                  <g fill="#ffffff" opacity="0.45">
+                    <circle cx="55" cy="75" r="14" />
+                    <circle cx="75" cy="60" r="20" />
+                    <circle cx="95" cy="75" r="14" />
+                    <rect x="55" y="65" width="40" height="24" />
+                  </g>
+                </svg>
+              </div>
+              <div style="margin-bottom: 2px;">
+                <div style="font-size: 18px; font-weight: 500; line-height: 1.2;">Berawan</div>
+                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Terasa seperti 33°C</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="forecast-split" style="display: flex; gap: 8px; margin-top: 15px; width: 100%;">
+            <!-- Sisi Satelit -->
+            <div style="flex: 1; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 8px;">
+              <div style="font-size: 10px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;"><i class="ph-bold ph-satellite"></i> Satelit</div>
+              <div class="forecast-list" style="margin-top: 0; gap: 4px;">
+                <div class="forecast-item" style="padding: 6px 8px; justify-content: space-between;">
+                  <div style="display: flex; align-items: center;">
+                    <div class="f-icon" style="color: #ffb703; font-size: 16px; margin-right: 8px;"><i class="ph-fill ph-solar-panel"></i></div>
+                    <div class="f-desc"><span style="font-size: 11px;">Estimasi PLTS :</span></div>
+                  </div>
+                  <div class="f-val" id="est-solar-sat" style="font-size: 14px; white-space: nowrap; text-align: right;">-- <small>kW</small></div>
+                </div>
+                <div class="forecast-item" style="padding: 6px 8px; justify-content: space-between;">
+                  <div style="display: flex; align-items: center;">
+                    <div class="f-icon" style="color: #06d6a0; font-size: 16px; margin-right: 8px;"><i class="ph-fill ph-wind"></i></div>
+                    <div class="f-desc"><span style="font-size: 11px;">Estimasi PLTB :</span></div>
+                  </div>
+                  <div class="f-val" id="est-wind-sat" style="font-size: 14px; white-space: nowrap; text-align: right;">-- <small>kW</small></div>
+                </div>
+                <div class="forecast-item" style="padding: 6px 8px; background: rgba(0,0,0,0.1); justify-content: space-between;">
+                  <div class="f-desc"><span style="font-size: 11px; color: var(--text-secondary);">ESTIMASI TOTAL :</span></div>
+                  <div class="f-val" id="est-total-sat" style="font-size: 14px; color: #06d6a0; white-space: nowrap; text-align: right;">-- <small>kW</small></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sisi Sensor -->
+            <div style="flex: 1; padding-left: 2px;">
+              <div style="font-size: 10px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;"><i class="ph-bold ph-cpu"></i> Sensor Lokal</div>
+              <div class="forecast-list" style="margin-top: 0; gap: 4px;">
+                <div class="forecast-item" style="padding: 6px 8px; justify-content: space-between;">
+                  <div style="display: flex; align-items: center;">
+                    <div class="f-icon" style="color: #ffb703; font-size: 16px; margin-right: 8px;"><i class="ph-fill ph-solar-panel"></i></div>
+                    <div class="f-desc"><span style="font-size: 11px;">Estimasi PLTS :</span></div>
+                  </div>
+                  <div class="f-val" id="est-solar-sen" style="font-size: 14px; white-space: nowrap; text-align: right;">-- <small>kW</small></div>
+                </div>
+                <div class="forecast-item" style="padding: 6px 8px; justify-content: space-between;">
+                  <div style="display: flex; align-items: center;">
+                    <div class="f-icon" style="color: #06d6a0; font-size: 16px; margin-right: 8px;"><i class="ph-fill ph-wind"></i></div>
+                    <div class="f-desc"><span style="font-size: 11px;">Estimasi PLTB :</span></div>
+                  </div>
+                  <div class="f-val" id="est-wind-sen" style="font-size: 14px; white-space: nowrap; text-align: right;">-- <small>kW</small></div>
+                </div>
+                <div class="forecast-item" style="padding: 6px 8px; background: rgba(0,0,0,0.1); justify-content: space-between;">
+                  <div class="f-desc"><span style="font-size: 11px; color: var(--text-secondary);">ESTIMASI TOTAL :</span></div>
+                  <div class="f-val" id="est-total-sen" style="font-size: 14px; color: #06d6a0; white-space: nowrap; text-align: right;">-- <small>kW</small></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card sunpath-card">
+          <div class="card-header center">
+            <span class="date"
+              style="background: transparent; color: var(--text-primary); font-size: 14px; font-weight: 500;">Lintasan &
+              Radiasi Matahari</span>
+            <i class="ph ph-dots-three"></i>
+          </div>
+
+          <div class="arc-container"
+            style="flex: 6; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 5px;">
+            <svg viewBox="0 0 200 110" class="sun-arc" style="max-height: 100%; width: 100%;">
+              <defs>
+                <linearGradient id="sun-area-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="rgba(255, 183, 3, 0.7)" />
+                  <stop offset="100%" stop-color="rgba(255, 183, 3, 0)" />
+                </linearGradient>
+              </defs>
+
+              <!-- Base Arc (Dim) -->
+              <path d="M 10 90 A 90 90 0 0 1 190 90" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="2" />
+
+              <!-- Area under the sun path -->
+              <path id="sun-area" d="M 10 90 A 90 90 0 0 1 10 90 L 10 90 Z" fill="url(#sun-area-gradient)" />
+
+              <!-- Bright Progress Arc -->
+              <path id="sun-arc-progress" d="M 10 90 A 90 90 0 0 1 190 90" fill="none" stroke="#fff" stroke-width="3"
+                stroke-dasharray="282.74" stroke-dashoffset="282.74" style="transition: stroke-dashoffset 1s ease;" />
+
+              <!-- Sun Element (Rotated via JS) -->
+              <g id="sun-group" style="transform-origin: 100px 90px; transition: transform 1s ease;">
+                <circle cx="10" cy="90" r="8" fill="#ffb703" filter="drop-shadow(0 0 8px #ffb703)" />
+              </g>
+            </svg>
+            <div class="arc-labels"
+              style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-secondary); margin-top: -5px; position: relative; width: 100%;">
+              <span>06:00 (Terbit)</span>
+              <span style="position: absolute; left: 50%; transform: translateX(-50%);">12:00 (Tinggi)</span>
+              <span>18:00 (Terbenam)</span>
+            </div>
+          </div>
+
+          <div class="chart-container"
+            style="flex: 4; min-height: 0; position: relative; width: 100%; margin-top: 10px;">
+            <canvas id="radiationChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLUMN 3: Dial & Controllers -->
+      <section class="col col-3">
+        <!-- Energy Drought Risk Core -->
+        <div class="card drought-risk-card" id="risk-card">
+          <div class="reactor-container">
+            <div class="reactor-ring"></div>
+            <div class="reactor-core"></div>
+          </div>
+          <div class="drought-info">
+            <h3>Drought Risk Index</h3>
+            <p id="risk-status">AMAN</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <h2>Data Sensor</h2>
+          <div class="toggle-switch">
+            <input type="checkbox" id="main-power" checked>
+            <label for="main-power"></label>
+          </div>
+        </div>
+
+        <div class="card dial-card"
+          style="justify-content: center; align-items: center; display: flex; flex-direction: column;">
+          <!-- Circular Dial -->
+          <div class="dial-container">
+            <!-- Scale Markers -->
+            <div class="dial-scale">
+              <span id="scale-top" class="scale-marker sm-top">0</span>
+              <span id="scale-right" class="scale-marker sm-right">12.5</span>
+              <span id="scale-bottom" class="scale-marker sm-bottom">25</span>
+              <span id="scale-left" class="scale-marker sm-left">37.5</span>
+            </div>
+            <svg viewBox="0 0 200 200" class="dial-svg">
+              <!-- Outer Dashed Ring -->
+              <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5"
+                stroke-dasharray="8 8" />
+              <!-- Background circle -->
+              <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8" />
+              <!-- Progress circle -->
+              <circle cx="100" cy="100" r="70" fill="none" stroke="#f72585" stroke-width="8" stroke-dasharray="440"
+                stroke-dashoffset="150" stroke-linecap="round"
+                style="transition: stroke-dashoffset 1s ease, stroke 1s ease;" />
+            </svg>
+
+            <div class="dial-value">
+              <div id="master-icon-wrap" style="color: #f72585; font-size: 20px; margin-bottom: -5px;">
+                <i class="ph-fill ph-thermometer"></i>
+              </div>
+              <h2 id="master-value">32<span>°C</span></h2>
+              <div id="master-status-badge"
+                style="background: rgba(247,37,133,0.15); color: #f72585; font-size: 10px; padding: 2px 8px; border-radius: 12px; font-weight: 500; display: inline-block; margin-top: 0px; text-transform: uppercase;">
+                NORMAL</div>
+            </div>
+          </div>
+          <p id="master-label"
+            style="font-size: 14px; color: #fff; margin-top: 15px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase;">
+            Suhu Udara</p>
+          <p id="master-minmax" style="font-size: 10px; color: #fff; margin-top: 4px; opacity: 0.8;">Min: 0 | Max: 50
+          </p>
+        </div>
+
+        <div class="controller-section">
+          <h3>Status Sensor</h3>
+          <div class="controller-grid">
+
+            <!-- Sensor 1: Radiasi -->
+            <div class="ctrl-card active" onclick="selectSensor('rad')" style="cursor: pointer; grid-column: span 3;">
+              <div class="ctrl-head">
+                <span class="status" style="color: #ffb703;">LIVE</span>
+              </div>
+              <div class="ctrl-icon-wrap" style="position: relative; width: 36px; height: 36px; margin-bottom: 4px;">
+                <svg viewBox="0 0 36 36"
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="#ffb703" stroke-width="2" stroke-dasharray="106.81"
+                    stroke-dashoffset="26.7" id="dial-rad" style="transition: stroke-dashoffset 1s ease;"
+                    stroke-linecap="round" />
+                </svg>
+                <div class="ctrl-icon icon-yellow"
+                  style="margin: 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"><i
+                    class="ph-fill ph-sun"></i></div>
+              </div>
+              <h4>Radiasi Matahari</h4>
+              <p id="val-rad-card"
+                style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: -0.5px;">850
+                <small
+                  style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">W/m²</small>
+              </p>
+            </div>
+
+            <!-- Sensor 2: Kecepatan Angin -->
+            <div class="ctrl-card green" onclick="selectSensor('wind')" style="cursor: pointer;">
+              <div class="ctrl-head">
+                <span class="status" style="color: #06d6a0;">LIVE</span>
+              </div>
+              <div class="ctrl-icon-wrap" style="position: relative; width: 36px; height: 36px; margin-bottom: 4px;">
+                <svg viewBox="0 0 36 36"
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="#06d6a0" stroke-width="2" stroke-dasharray="106.81"
+                    stroke-dashoffset="20" id="dial-wind" style="transition: stroke-dashoffset 1s ease;"
+                    stroke-linecap="round" />
+                </svg>
+                <div class="ctrl-icon icon-green"
+                  style="margin: 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"><i
+                    class="ph-fill ph-wind"></i></div>
+              </div>
+              <h4>Kecepatan Angin</h4>
+              <p id="val-wind-card"
+                style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: -0.5px;">15
+                <small
+                  style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">m/s</small>
+              </p>
+            </div>
+
+            <!-- Sensor 3: Arah Angin -->
+            <div class="ctrl-card dark" onclick="selectSensor('winddir')" style="cursor: pointer;">
+              <div class="ctrl-head">
+                <span class="status" style="color: #4cc9f0;">LIVE</span>
+                <span style="font-weight: 700; font-size: 10px; color: #fff;" id="wind-deg-val">225°</span>
+              </div>
+              <div class="ctrl-icon-wrap" style="position: relative; width: 36px; height: 36px; margin-bottom: 4px;">
+                <svg viewBox="0 0 36 36"
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="#4cc9f0" stroke-width="2" stroke-dasharray="106.81"
+                    stroke-dashoffset="0" stroke-linecap="round" />
+                </svg>
+                <div class="ctrl-icon"
+                  style="margin: 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(76,201,240,0.15); color: #4cc9f0;">
+                  <i class="ph-fill ph-navigation-arrow" id="wind-compass-icon"
+                    style="transition: transform 1s ease; display: inline-block; transform: rotate(45deg);"></i>
+                </div>
+              </div>
+              <h4>Arah Angin</h4>
+              <p id="wind-dir-val"
+                style="font-size: 12px; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: 0;">Barat Daya
+              </p>
+            </div>
+
+            <!-- Sensor 4: Suhu Udara -->
+            <div class="ctrl-card" onclick="selectSensor('temp')" style="cursor: pointer;">
+              <div class="ctrl-head">
+                <span class="status" style="color: #f72585;">LIVE</span>
+              </div>
+              <div class="ctrl-icon-wrap" style="position: relative; width: 36px; height: 36px; margin-bottom: 4px;">
+                <svg viewBox="0 0 36 36"
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="#f72585" stroke-width="2" stroke-dasharray="106.81"
+                    stroke-dashoffset="53.4" id="dial-temp" style="transition: stroke-dashoffset 1s ease;"
+                    stroke-linecap="round" />
+                </svg>
+                <div class="ctrl-icon"
+                  style="margin: 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #f72585;">
+                  <i class="ph-fill ph-thermometer"></i>
+                </div>
+              </div>
+              <h4>Suhu Udara</h4>
+              <p id="val-temp-card"
+                style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: -0.5px;">32
+                <small
+                  style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">°C</small>
+              </p>
+            </div>
+
+            <!-- Sensor 5: Kelembapan -->
+            <div class="ctrl-card" onclick="selectSensor('hum')" style="cursor: pointer;">
+              <div class="ctrl-head">
+                <span class="status" style="color: #7209b7;">LIVE</span>
+              </div>
+              <div class="ctrl-icon-wrap" style="position: relative; width: 36px; height: 36px; margin-bottom: 4px;">
+                <svg viewBox="0 0 36 36"
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="#7209b7" stroke-width="2" stroke-dasharray="106.81"
+                    stroke-dashoffset="30" id="dial-hum" style="transition: stroke-dashoffset 1s ease;"
+                    stroke-linecap="round" />
+                </svg>
+                <div class="ctrl-icon"
+                  style="margin: 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #7209b7;">
+                  <i class="ph-fill ph-drop"></i>
+                </div>
+              </div>
+              <h4>Kelembapan</h4>
+              <p id="val-hum-card"
+                style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: -0.5px;">65
+                <small
+                  style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">%</small>
+              </p>
+            </div>
+
+            <!-- Sensor 6: Tekanan -->
+            <div class="ctrl-card" onclick="selectSensor('pres')" style="cursor: pointer;">
+              <div class="ctrl-head">
+                <span class="status" style="color: #a7c957;">LIVE</span>
+              </div>
+              <div class="ctrl-icon-wrap" style="position: relative; width: 36px; height: 36px; margin-bottom: 4px;">
+                <svg viewBox="0 0 36 36"
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="#a7c957" stroke-width="2" stroke-dasharray="106.81"
+                    stroke-dashoffset="10" id="dial-pres" style="transition: stroke-dashoffset 1s ease;"
+                    stroke-linecap="round" />
+                </svg>
+                <div class="ctrl-icon"
+                  style="margin: 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #a7c957;">
+                  <i class="ph-fill ph-arrows-in"></i>
+                </div>
+              </div>
+              <h4>Tekanan</h4>
+              <p id="val-pres-card"
+                style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: -0.5px;">101.2
+                <small
+                  style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">kPa</small>
+              </p>
+            </div>
+
+            <!-- Sensor 7: Curah Hujan -->
+            <div class="ctrl-card" onclick="selectSensor('rain')" style="cursor: pointer;">
+              <div class="ctrl-head">
+                <span class="status" style="color: #4cc9f0;">LIVE</span>
+              </div>
+              <div class="ctrl-icon-wrap" style="position: relative; width: 36px; height: 36px; margin-bottom: 4px;">
+                <svg viewBox="0 0 36 36"
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="#4cc9f0" stroke-width="2" stroke-dasharray="106.81"
+                    stroke-dashoffset="100" id="dial-rain" style="transition: stroke-dashoffset 1s ease;"
+                    stroke-linecap="round" />
+                </svg>
+                <div class="ctrl-icon"
+                  style="margin: 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #4cc9f0;">
+                  <i class="ph-fill ph-cloud-rain"></i>
+                </div>
+              </div>
+              <h4>Curah Hujan</h4>
+              <p id="val-rain-card"
+                style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: -0.5px;">0
+                <small
+                  style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">mm</small>
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
