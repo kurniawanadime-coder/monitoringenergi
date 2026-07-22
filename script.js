@@ -490,27 +490,4 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  // 13. Background Cuaca Hujan Animasi
-  const weatherCanvas = document.getElementById('weatherCanvas');
-  if (weatherCanvas) {
-    const wCtx = weatherCanvas.getContext('2d');
-    weatherCanvas.width = window.innerWidth; weatherCanvas.height = window.innerHeight;
-    let particles = [];
-    for (let i = 0; i < 100; i++) {
-      particles.push({ x: Math.random() * weatherCanvas.width, y: Math.random() * weatherCanvas.height, l: Math.random() * 20 + 10, s: Math.random() * 5 + 5 });
-    }
-    function drawWeather() {
-      wCtx.clearRect(0, 0, weatherCanvas.width, weatherCanvas.height);
-      wCtx.strokeStyle = 'rgba(255, 255, 255, 0.15)'; wCtx.lineWidth = 1; wCtx.lineCap = 'round';
-      particles.forEach(p => {
-        wCtx.beginPath(); wCtx.moveTo(p.x, p.y); wCtx.lineTo(p.x + p.l * 0.1, p.y + p.l); wCtx.stroke();
-        p.y += p.s; p.x += p.s * 0.1;
-        if (p.y > weatherCanvas.height) { p.y = -20; p.x = Math.random() * weatherCanvas.width; }
-      });
-      requestAnimationFrame(drawWeather);
-    }
-    drawWeather();
-    window.addEventListener('resize', () => { weatherCanvas.width = window.innerWidth; weatherCanvas.height = window.innerHeight; });
-  }
 });
