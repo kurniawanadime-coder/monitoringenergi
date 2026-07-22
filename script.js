@@ -1,10 +1,12 @@
-// Environment Dashboard Interactivity - FINAL TERKALIBRASI (Versi Transmisi Gabungan CSV)
+// Environment Dashboard Interactivity - FINAL TERKALIBRASI (Versi Transmisi Gabungan CSV & Offline Mode)
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.addEventListener('DOMContentLoaded', () => {
-  
-  // --- MULAI TAMBAHAN FUNGSI OFFLINE/ONLINE ---
+  // 1. Variabel Status Online
+  let isSensorOnline = false;
+
+  // 2. Fungsi Penyapu Bersih (Offline Mode)
   function setSensorOffline() {
+    isSensorOnline = false;
     const statusBadges = document.querySelectorAll('.ctrl-head .status');
     statusBadges.forEach(badge => {
       if (!badge.dataset.color) badge.dataset.color = badge.style.color; 
@@ -26,7 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // 3. Fungsi Penghidup Layar (Online Mode)
   function setSensorOnline() {
+    isSensorOnline = true;
     const statusBadges = document.querySelectorAll('.ctrl-head .status');
     statusBadges.forEach(badge => {
       if (badge.innerText !== 'LIVE') {
@@ -42,11 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Jalankan mode redup saat web pertama kali dibuka
+  // JALANKAN MODE OFFLINE SAAT WEB PERTAMA DIBUKA
   setSensorOffline();
-  // --- BATAS TAMBAHAN FUNGSI ---
 
-  // 1. Update Date
+  // 4. Update Date
   const dateEl = document.getElementById('current-date');
   if (dateEl) {
     const today = new Date();
@@ -54,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dateEl.innerText = `Hari Ini (${today.toLocaleDateString('id-ID', options)})`;
   }
 
-  // 2. Bank Data Global
+  // 5. Bank Data Global
   let globalSatData = { rad: null, wind: null, temp: null, hum: null, pres: null, rain: null, windDirDeg: null, windDirText: 'Utara' };
   window.globalSensorData = { temp: 0, hum: 0, pres: 0, rad: 0, wind: 0, rain: 0, windDirDeg: 0, windDirText: 'Utara' };
 
@@ -63,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sunArea = document.getElementById('sun-area');
   const sunProgress = document.getElementById('sun-arc-progress');
 
-  // 3. Kalkulasi Deviasi (Satelit vs Sensor Lokal)
+  // 6. Kalkulasi Deviasi (Satelit vs Sensor Lokal)
   function calculateDelta() {
     if (globalSatData.rad === null || globalSatData.wind === null) return;
 
@@ -87,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
       dWindDesc.innerText = deltaWind > 0 ? 'Sensor lebih tinggi' : (deltaWind < 0 ? 'Sensor lebih rendah' : 'Sama dengan satelit');
     }
 
-    // Logic Risiko
     const riskCard = document.getElementById('risk-card');
     const riskStatus = document.getElementById('risk-status');
     if (riskCard && riskStatus) {
@@ -103,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Estimasi Energi Satelit
     const solarKWSat = (globalSatData.rad * 10 * 0.15) / 1000;
     let windKWSat = 0;
     if (globalSatData.wind > 10) {
@@ -122,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
       estTotalSat.style.color = totalKWSat < 2.0 ? '#f72585' : '#06d6a0';
     }
 
-    // Estimasi Energi Sensor Lokal
     const solarKWSen = (data.rad * 10 * 0.15) / 1000;
     let windKWSen = 0;
     if (data.wind > 10) {
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 4. Update UI Otomatis (Hanya Animasi Matahari)
+  // 7. Update UI Otomatis (Hanya Animasi Matahari)
   function updateData() {
     if (sunGroup && sunArea && sunProgress) {
       const now = new Date();
@@ -165,11 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateDelta();
   }
 
-  // 5. Setup MQTT HiveMQ
+  // 8. Setup MQTT HiveMQ
   const brokerUrl = "broker.hivemq.com";
   const brokerPort = 8884;
   const clientId = "dashboard-client-" + Math.random().toString(16).substr(2, 8);
-  const mainTopic = "cuaca/adi/all"; // Topik gabungan baru
+  const mainTopic = "cuaca/adi/all"; 
   let mqttClient;
 
   try {
@@ -185,38 +185,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function onConnect() {
     console.log("Terhubung ke MQTT Broker!");
-    // Hanya subscribe ke satu topik utama
     mqttClient.subscribe(mainTopic);
   }
 
   function onConnectionLost(res) {
     if (res.errorCode !== 0) {
       console.log("MQTT Terputus. Reconnecting...");
-      
-      // -- TAMBAHKAN BARIS INI: Panggil efek redup saat putus --
-      setSensorOffline(); 
-      
-      // Pastikan useSSL bernilai true
+      setSensorOffline(); // Panggil fungsi redup saat putus
       setTimeout(() => { mqttClient.connect({ onSuccess: onConnect, useSSL: true }); }, 5000);
     }
   }
 
-  // 6. Tangkap Data MQTT & Update Kartu Utama dan Kecil
+  // 9. Tangkap Data MQTT & Update Kartu Utama dan Kecil
   function onMessageArrived(message) {
     const topic = message.destinationName;
     const payload = message.payloadString;
     
     const smallStyle = 'style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;"';
-    const circleLen = 106.81; // Panjang keliling mini dial
+    const circleLen = 106.81; 
 
     if (topic === mainTopic) {
-      // Pecah kalimat gabungan CSV menjadi array
       const dataArray = payload.split(',');
       
-      // Pastikan data yang dikirim lengkap (7 variabel)
       if (dataArray.length >= 7) {
-        setSensorOnline();
-        // Konversi ke angka secara berurutan: Suhu(0), Kelembapan(1), Tekanan(2), Hujan(3), Angin(4), Arah(5), Radiasi(6)
+        
+        // Panggil fungsi nyala (LIVE) karena data berhasil masuk
+        setSensorOnline(); 
+
         const valTemp = parseFloat(dataArray[0]);
         const valHum  = parseFloat(dataArray[1]);
         const valPres = parseFloat(dataArray[2]);
@@ -225,7 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const valDir  = parseFloat(dataArray[5]);
         const valRad  = parseFloat(dataArray[6]);
 
-        // [1] Update Suhu
         if (!isNaN(valTemp)) {
           window.globalSensorData.temp = valTemp;
           const card = document.getElementById('val-temp-card');
@@ -234,7 +228,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (dial) dial.style.strokeDashoffset = circleLen - (valTemp / 50) * circleLen;
         }
         
-        // [2] Update Kelembapan
         if (!isNaN(valHum)) {
           window.globalSensorData.hum = valHum;
           const card = document.getElementById('val-hum-card');
@@ -243,7 +236,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (dial) dial.style.strokeDashoffset = circleLen - (valHum / 100) * circleLen;
         }
 
-        // [3] Update Tekanan
         if (!isNaN(valPres)) {
           window.globalSensorData.pres = valPres;
           const card = document.getElementById('val-pres-card');
@@ -252,7 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (dial) dial.style.strokeDashoffset = circleLen - ((valPres-90) / 20) * circleLen;
         }
 
-        // [4] Update Curah Hujan
         if (!isNaN(valRain)) {
           window.globalSensorData.rain = valRain;
           const card = document.getElementById('val-rain-card');
@@ -261,7 +252,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (dial) dial.style.strokeDashoffset = circleLen - (valRain / 50) * circleLen;
         }
 
-        // [5] Update Kecepatan Angin
         if (!isNaN(valWind)) {
           window.globalSensorData.wind = valWind;
           const card = document.getElementById('val-wind-card');
@@ -270,7 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (dial) dial.style.strokeDashoffset = circleLen - (valWind / 30) * circleLen;
         }
 
-        // [6] Update Arah Angin
         if (!isNaN(valDir)) {
           window.globalSensorData.windDirDeg = valDir;
           const windDirs = ["Utara", "Timur Laut", "Timur", "Tenggara", "Selatan", "Barat Daya", "Barat", "Barat Laut"];
@@ -292,7 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (windCompass) windCompass.style.transform = `rotate(${valDir - 45}deg)`;
         }
 
-        // [7] Update Radiasi Matahari
         if (!isNaN(valRad)) {
           window.globalSensorData.rad = valRad;
           const card = document.getElementById('val-rad-card');
@@ -301,11 +289,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (dial) dial.style.strokeDashoffset = circleLen - (valRad / 1200) * circleLen;
         }
 
-        // Sinkronisasi otomatis ke Master Dial dan Deviasi
         if (window.currentSelectedSensor) { window.selectSensor(window.currentSelectedSensor); }
         calculateDelta();
-      } else {
-        console.warn("Format data gabungan tidak lengkap:", payload);
       }
     }
   }
@@ -313,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateData();
   setInterval(updateData, 60000); 
 
-  // 7. Data Lokasi & Satelit
+  // 10. Data Lokasi & Satelit
   function updateWeatherUI() {
     const now = new Date();
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -383,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   updateWeatherUI();
 
-  // 8. Logika Master Dial (Visual Tengah)
+  // 11. Logika Master Dial (Visual Tengah)
   window.selectSensor = function (type) {
     window.currentSelectedSensor = type;
     const cards = document.querySelectorAll('.ctrl-card');
@@ -473,9 +458,14 @@ document.addEventListener('DOMContentLoaded', () => {
       let status = 'KERING'; if ((data.rain || 0) > 10) status = 'HUJAN';
       updateBadge(status, '#4cc9f0', 'rgba(76,201,240,0.15)');
     }
+
+    // Memastikan label Master Dial tetap tertulis OFFLINE jika sensor mati
+    if (!isSensorOnline) {
+      updateBadge('OFFLINE', 'var(--text-secondary)', 'rgba(255,255,255,0.05)');
+    }
   };
 
-  // 9. Chart Area Statis
+  // 12. Chart Area Statis
   const ctx = document.getElementById('radiationChart');
   if (ctx) {
     const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 180);
@@ -501,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 10. Background Cuaca Hujan Animasi
+  // 13. Background Cuaca Hujan Animasi
   const weatherCanvas = document.getElementById('weatherCanvas');
   if (weatherCanvas) {
     const wCtx = weatherCanvas.getContext('2d');
