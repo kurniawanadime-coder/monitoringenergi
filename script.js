@@ -1,6 +1,51 @@
 // Environment Dashboard Interactivity - FINAL TERKALIBRASI (Versi Transmisi Gabungan CSV)
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
+  
+  // --- MULAI TAMBAHAN FUNGSI OFFLINE/ONLINE ---
+  function setSensorOffline() {
+    const statusBadges = document.querySelectorAll('.ctrl-head .status');
+    statusBadges.forEach(badge => {
+      if (!badge.dataset.color) badge.dataset.color = badge.style.color; 
+      badge.innerText = 'OFFLINE';
+      badge.style.color = 'var(--text-secondary)'; 
+    });
+
+    const cards = document.querySelectorAll('.ctrl-card');
+    cards.forEach(card => {
+      card.style.opacity = '0.4'; 
+      card.style.filter = 'grayscale(100%)'; 
+    });
+
+    const masterBadge = document.getElementById('master-status-badge');
+    if (masterBadge) {
+      masterBadge.innerText = 'OFFLINE';
+      masterBadge.style.background = 'rgba(255,255,255,0.05)';
+      masterBadge.style.color = 'var(--text-secondary)';
+    }
+  }
+
+  function setSensorOnline() {
+    const statusBadges = document.querySelectorAll('.ctrl-head .status');
+    statusBadges.forEach(badge => {
+      if (badge.innerText !== 'LIVE') {
+        badge.innerText = 'LIVE';
+        badge.style.color = badge.dataset.color; 
+      }
+    });
+
+    const cards = document.querySelectorAll('.ctrl-card');
+    cards.forEach(card => {
+      card.style.opacity = '1';
+      card.style.filter = 'grayscale(0%)';
+    });
+  }
+
+  // Jalankan mode redup saat web pertama kali dibuka
+  setSensorOffline();
+  // --- BATAS TAMBAHAN FUNGSI ---
+
   // 1. Update Date
   const dateEl = document.getElementById('current-date');
   if (dateEl) {
@@ -147,7 +192,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function onConnectionLost(res) {
     if (res.errorCode !== 0) {
       console.log("MQTT Terputus. Reconnecting...");
-      setTimeout(() => { mqttClient.connect({ onSuccess: onConnect, useSSL: false }); }, 5000);
+      
+      // -- TAMBAHKAN BARIS INI: Panggil efek redup saat putus --
+      setSensorOffline(); 
+      
+      // Pastikan useSSL bernilai true
+      setTimeout(() => { mqttClient.connect({ onSuccess: onConnect, useSSL: true }); }, 5000);
     }
   }
 
@@ -165,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Pastikan data yang dikirim lengkap (7 variabel)
       if (dataArray.length >= 7) {
+        setSensorOnline();
         // Konversi ke angka secara berurutan: Suhu(0), Kelembapan(1), Tekanan(2), Hujan(3), Angin(4), Arah(5), Radiasi(6)
         const valTemp = parseFloat(dataArray[0]);
         const valHum  = parseFloat(dataArray[1]);
