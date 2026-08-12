@@ -311,20 +311,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const locName = document.getElementById('loc-name');
     if (locName) {
-      fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
-          let lat = -7.7, lon = 110.6;
-          if (data.city && data.country_name) {
-            locName.innerText = `${data.city}, ${data.country_name}`;
-            lat = data.latitude; lon = data.longitude;
-          } else { locName.innerText = "Yogyakarta, Indonesia"; }
-          fetchSatelliteData(lat, lon);
-        })
-        .catch(() => {
-          locName.innerText = "Yogyakarta, Indonesia";
-          fetchSatelliteData(-7.7, 110.6);
-        });
+      // -------------------------------------------------------------
+      // UBAH LOKASI SENSOR ANDA DI SINI
+      // Ganti dengan lokasi dan koordinat asli tempat alat diletakkan
+      // -------------------------------------------------------------
+      const sensorLocationName = "Yogyakarta, Indonesia";
+      const sensorLat = -7.7;
+      const sensorLon = 110.6;
+      
+      locName.innerText = sensorLocationName;
+      fetchSatelliteData(sensorLat, sensorLon);
     }
   }
 
