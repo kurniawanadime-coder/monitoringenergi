@@ -5,12 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let isSensorOnline = false;
 
   // 2. Fungsi Penyapu Bersih (Offline Mode)
-  function setSensorOffline() {
+  function setSensorOffline(statusText = 'MENUNGGU...') {
     isSensorOnline = false;
     const statusBadges = document.querySelectorAll('.ctrl-head .status');
     statusBadges.forEach(badge => {
       if (!badge.dataset.color) badge.dataset.color = badge.style.color; 
-      badge.innerText = 'OFFLINE';
+      badge.innerText = statusText;
       badge.style.color = 'var(--text-secondary)'; 
     });
 
@@ -22,10 +22,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const masterBadge = document.getElementById('master-status-badge');
     if (masterBadge) {
-      masterBadge.innerText = 'OFFLINE';
+      masterBadge.innerText = statusText;
       masterBadge.style.background = 'rgba(255,255,255,0.05)';
       masterBadge.style.color = 'var(--text-secondary)';
     }
+
+    // Ganti angka bawaan (dummy) menjadi tanda strip saat menunggu
+    const cardValues = ['val-rad-card', 'val-wind-card', 'val-temp-card', 'val-hum-card', 'val-pres-card', 'val-rain-card'];
+    cardValues.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = `-- <small style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">menunggu data</small>`;
+    });
+
+    const masterValue = document.getElementById('master-value');
+    if (masterValue) masterValue.innerHTML = `--<span></span>`;
   }
 
   // 3. Fungsi Penghidup Layar (Online Mode)
@@ -191,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function onConnectionLost(res) {
     if (res.errorCode !== 0) {
       console.log("MQTT Terputus. Reconnecting...");
-      setSensorOffline(); // Panggil fungsi redup saat putus
+      setSensorOffline('TERPUTUS'); // Panggil fungsi redup saat putus
       setTimeout(() => { mqttClient.connect({ onSuccess: onConnect, useSSL: true }); }, 5000);
     }
   }
