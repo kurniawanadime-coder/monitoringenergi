@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let mqttClient;
 
   try {
-    mqttClient = new Paho.MQTT.Client(brokerUrl, brokerPort, clientId);
+    mqttClient = new Paho.MQTT.Client(brokerUrl, brokerPort, "/mqtt", clientId);
     mqttClient.onConnectionLost = onConnectionLost;
     mqttClient.onMessageArrived = onMessageArrived;
     
