@@ -495,6 +495,10 @@ document.addEventListener('DOMContentLoaded', () => {
           x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b8b9b', font: { size: 10 } } },
           y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b8b9b', font: { size: 10 } }, beginAtZero: true }
         }
+      }
+    });
+  }
+
   // ==========================================
   // 13. LOGIKA HALAMAN HISTORY & EXPORT
   // ==========================================
