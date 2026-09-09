@@ -217,18 +217,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (topic === mainTopic) {
       const dataArray = payload.split(',');
       
-      if (dataArray.length >= 7) {
+      // Format Baru Arduino:
+      // Index: 0=waktu, 1=rad, 2=suhu, 3=rh, 4=pres, 5=rain, 6=wind, 7=windMax, 8=arah(°), 9=mataAngin, 10=flag
+      if (dataArray.length >= 10) {
         
         // Panggil fungsi nyala (LIVE) karena data berhasil masuk
         setSensorOnline(); 
 
-        const valTemp = parseFloat(dataArray[0]);
-        const valHum  = parseFloat(dataArray[1]);
-        const valPres = parseFloat(dataArray[2]);
-        const valRain = parseFloat(dataArray[3]);
-        const valWind = parseFloat(dataArray[4]);
-        const valDir  = parseFloat(dataArray[5]);
-        const valRad  = parseFloat(dataArray[6]);
+        const valRad  = parseFloat(dataArray[1]);
+        const valTemp = parseFloat(dataArray[2]);
+        const valHum  = parseFloat(dataArray[3]);
+        const valPres = parseFloat(dataArray[4]);
+        const valRain = parseFloat(dataArray[5]);
+        const valWind = parseFloat(dataArray[6]);
+        const valDir  = parseFloat(dataArray[8]);
 
         if (!isNaN(valTemp)) {
           window.globalSensorData.temp = valTemp;
