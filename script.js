@@ -495,7 +495,171 @@ document.addEventListener('DOMContentLoaded', () => {
           x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b8b9b', font: { size: 10 } } },
           y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b8b9b', font: { size: 10 } }, beginAtZero: true }
         }
+  // ==========================================
+  // 13. LOGIKA HALAMAN HISTORY & EXPORT
+  // ==========================================
+  window.switchPage = function(pageId) {
+    const pageHome = document.getElementById('page-home');
+    const pageHistory = document.getElementById('page-history');
+    const navHome = document.getElementById('nav-home');
+    const navHistory = document.getElementById('nav-history');
+
+    if (pageId === 'home') {
+      pageHome.style.display = 'contents';
+      pageHistory.style.display = 'none';
+      if (navHome) navHome.classList.add('active');
+      if (navHistory) navHistory.classList.remove('active');
+    } else if (pageId === 'history') {
+      pageHome.style.display = 'none';
+      pageHistory.style.display = 'flex';
+      if (navHome) navHome.classList.remove('active');
+      if (navHistory) navHistory.classList.add('active');
+      
+      // Set default dates if empty
+      const startDateInput = document.getElementById('hist-start-date');
+      const endDateInput = document.getElementById('hist-end-date');
+      if (!startDateInput.value) {
+        const today = new Date();
+        endDateInput.value = today.toISOString().split('T')[0];
+        const lastWeek = new Date(today);
+        lastWeek.setDate(lastWeek.getDate() - 7);
+        startDateInput.value = lastWeek.toISOString().split('T')[0];
+      }
+    }
+  };
+
+  let historyData = null;
+  let historyChart = null;
+  let currentHistoryVar = 'rad';
+
+  window.fetchHistoryData = function() {
+    const startDate = document.getElementById('hist-start-date').value;
+    const endDate = document.getElementById('hist-end-date').value;
+    if (!startDate || !endDate) return alert("Pilih tanggal mulai dan selesai!");
+
+    const lat = -7.7; // Sesuaikan dengan koordinat web utama
+    const lon = 110.6;
+    // Gunakan Open-Meteo Archive API untuk data masa lalu tanpa batas
+    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${startDate}&end_date=${endDate}&hourly=temperature_2m,relative_humidity_2m,surface_pressure,precipitation,wind_speed_10m,shortwave_radiation,wind_direction_10m`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          alert("Gagal menarik data: " + data.reason);
+          return;
+        }
+        historyData = data.hourly;
+        renderHistoryChart(currentHistoryVar);
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Gagal terhubung ke satelit Open-Meteo.");
+      });
+  };
+
+  window.selectHistoryVar = function(type) {
+    currentHistoryVar = type;
+    const cards = document.querySelectorAll('#page-history .ctrl-card');
+    cards.forEach(c => c.classList.remove('active'));
+    const clickedCard = document.getElementById('hist-card-' + type);
+    if (clickedCard) clickedCard.classList.add('active');
+    
+    if (historyData) renderHistoryChart(type);
+  };
+
+  function renderHistoryChart(type) {
+    if (!historyData) return;
+
+    const ctx = document.getElementById('historicalChart');
+    if (!ctx) return;
+    
+    if (historyChart) historyChart.destroy();
+
+    let chartData = [];
+    let label = '';
+    let color = '';
+    let bgColor = '';
+    const timeLabels = historyData.time.map(t => {
+      const d = new Date(t);
+      return `${d.getDate()}/${d.getMonth()+1} ${d.getHours().toString().padStart(2, '0')}:00`;
+    });
+
+    if (type === 'rad') {
+      chartData = historyData.shortwave_radiation; label = 'Radiasi Matahari (W/m²)'; color = '#ffb703'; bgColor = 'rgba(255,183,3,0.1)';
+    } else if (type === 'temp') {
+      chartData = historyData.temperature_2m; label = 'Suhu Udara (°C)'; color = '#f72585'; bgColor = 'rgba(247,37,133,0.1)';
+    } else if (type === 'hum') {
+      chartData = historyData.relative_humidity_2m; label = 'Kelembapan (%)'; color = '#7209b7'; bgColor = 'rgba(114,9,183,0.1)';
+    } else if (type === 'pres') {
+      chartData = historyData.surface_pressure; label = 'Tekanan (hPa)'; color = '#a7c957'; bgColor = 'rgba(167,201,87,0.1)';
+    } else if (type === 'wind') {
+      chartData = historyData.wind_speed_10m; label = 'Kecepatan Angin (km/h)'; color = '#06d6a0'; bgColor = 'rgba(6,214,160,0.1)';
+    } else if (type === 'rain') {
+      chartData = historyData.precipitation; label = 'Curah Hujan (mm)'; color = '#4cc9f0'; bgColor = 'rgba(76,201,240,0.1)';
+    }
+
+    document.getElementById('hist-chart-title').innerText = `Grafik Riwayat: ${label}`;
+
+    historyChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: timeLabels,
+        datasets: [{
+          label: label,
+          data: chartData,
+          borderColor: color,
+          backgroundColor: bgColor,
+          borderWidth: 2,
+          pointRadius: 0,
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b8b9b', maxTicksLimit: 10 } },
+          y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b8b9b' } }
+        }
       }
     });
   }
+
+  window.downloadHistoryCSV = function() {
+    if (!historyData) {
+      alert("Silakan klik 'Tarik Data' terlebih dahulu sebelum mengunduh CSV!");
+      return;
+    }
+
+    let csvContent = "Tanggal/Waktu,Radiasi(W/m2),Suhu(C),Kelembapan(%),Tekanan(hPa),Hujan(mm),Kecepatan_Angin(km/h),Arah_Angin(Derajat)\n";
+    
+    for (let i = 0; i < historyData.time.length; i++) {
+      // Format waktu agar Excel ramah: YYYY-MM-DD HH:MM:SS
+      const t = historyData.time[i];
+      const timeExcel = t.replace('T', ' '); 
+      
+      const rad = historyData.shortwave_radiation[i];
+      const temp = historyData.temperature_2m[i];
+      const hum = historyData.relative_humidity_2m[i];
+      const pres = historyData.surface_pressure[i];
+      const rain = historyData.precipitation[i];
+      const wind = historyData.wind_speed_10m[i];
+      const windDir = historyData.wind_direction_10m[i];
+      
+      csvContent += `${timeExcel},${rad},${temp},${hum},${pres},${rain},${wind},${windDir}\n`;
+    }
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Data_Satelit_${document.getElementById('hist-start-date').value}_ke_${document.getElementById('hist-end-date').value}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 });
