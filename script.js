@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Ganti angka bawaan (dummy) menjadi tanda strip saat menunggu
-    const cardValues = ['val-rad-card', 'val-wind-card', 'val-temp-card', 'val-hum-card', 'val-pres-card', 'val-rain-card'];
+    const cardValues = ['val-rad-card', 'val-wind-card', 'val-temp-card', 'val-hum-card', 'val-pres-card', 'val-rain-card', 'val-pm25-card', 'val-pm10-card'];
     cardValues.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = `-- <small style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">menunggu data</small>`;
@@ -39,13 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 3. Fungsi Penghidup Layar (Online Mode)
-  function setSensorOnline() {
+  //    label: 'LIVE' untuk data baru, 'TERAKHIR' untuk pesan retained (data lama dari broker)
+  function setSensorOnline(label = 'LIVE') {
     isSensorOnline = true;
     const statusBadges = document.querySelectorAll('.ctrl-head .status');
     statusBadges.forEach(badge => {
-      if (badge.innerText !== 'LIVE') {
-        badge.innerText = 'LIVE';
-        badge.style.color = badge.dataset.color; 
+      if (!badge.dataset.color) badge.dataset.color = badge.style.color;
+      if (badge.innerText !== label) {
+        badge.innerText = label;
+        badge.style.color = badge.dataset.color;
       }
     });
 
@@ -69,7 +71,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 5. Bank Data Global
   let globalSatData = { rad: null, wind: null, temp: null, hum: null, pres: null, rain: null, windDirDeg: null, windDirText: 'Utara' };
-  window.globalSensorData = { temp: 0, hum: 0, pres: 0, rad: 0, wind: 0, rain: 0, windDirDeg: 0, windDirText: 'Utara' };
+  window.globalSensorData = { temp: 0, hum: 0, pres: 0, rad: 0, wind: 0, rain: 0, windDirDeg: 0, windDirText: 'Utara', pm25: null, pm10: null };
+
+  // Kategori ISPU (Permen LHK P.14/MENLHK/SETJEN/KUM.1/7/2020), batas atas konsentrasi µg/m³.
+  // CATATAN: ISPU resmi memakai rata-rata 24 jam; di sini dihitung dari rata-rata
+  // 1 menit SPS30, jadi kategorinya bersifat INDIKATIF.
+  const ISPU_KATEGORI = [
+    { nama: 'BAIK',               singkat: 'BAIK',      warna: '#06d6a0' },
+    { nama: 'SEDANG',             singkat: 'SEDANG',    warna: '#4cc9f0' },
+    { nama: 'TIDAK SEHAT',        singkat: 'T. SEHAT',  warna: '#ffb703' },
+    { nama: 'SANGAT TIDAK SEHAT', singkat: 'S.T. SEHAT',warna: '#f72585' },
+    { nama: 'BERBAHAYA',          singkat: 'BAHAYA',    warna: '#9d0208' }
+  ];
+  const ISPU_BATAS = {
+    pm25: [15.5, 55.4, 150.4, 250.4],
+    pm10: [50, 150, 350, 420]
+  };
+  function kategoriISPU(jenis, nilai) {
+    const batas = ISPU_BATAS[jenis];
+    let i = 0;
+    while (i < batas.length && nilai > batas[i]) i++;
+    return ISPU_KATEGORI[i];
+  }
 
   // Elemen UI Matahari
   const sunGroup = document.getElementById('sun-group');
@@ -179,18 +202,44 @@ document.addEventListener('DOMContentLoaded', () => {
   const brokerUrl = "broker.hivemq.com";
   const brokerPort = 8884;
   const clientId = "dashboard-client-" + Math.random().toString(16).substr(2, 8);
-  const mainTopic = "cuaca/adi/all"; 
+  const mainTopic = "cuaca/adi/all";
   let mqttClient;
+
+  // Firmware kirim tiap 60 dtk. Jika > 3 menit tanpa data baru -> tandai basi.
+  const STALE_MS = 3 * 60 * 1000;
+  let lastLiveMsgTime = 0;
+
+  // Sentinel dari firmware saat sensor gagal dibaca (radiasi=9999, lainnya=-999.0)
+  function nilaiSensor(str, validFlag) {
+    const v = parseFloat(str);
+    if (isNaN(v) || validFlag === false) return NaN;
+    if (v <= -999 || v >= 9999) return NaN;
+    return v;
+  }
+
+  function tampilkanError(cardId) {
+    const el = document.getElementById(cardId);
+    if (el) el.innerHTML = `ERR <small style="font-weight: 400; color: #f72585; font-size: 10px; letter-spacing: 0;">sensor gagal</small>`;
+  }
+
+  function connectMQTT() {
+    mqttClient.connect({
+      onSuccess: onConnect,
+      onFailure: (err) => {
+        console.log("Gagal konek MQTT, coba lagi 5 dtk...", err && err.errorMessage);
+        setTimeout(connectMQTT, 5000);
+      },
+      useSSL: true,
+      keepAliveInterval: 30,
+      timeout: 10
+    });
+  }
 
   try {
     mqttClient = new Paho.MQTT.Client(brokerUrl, brokerPort, "/mqtt", clientId);
     mqttClient.onConnectionLost = onConnectionLost;
     mqttClient.onMessageArrived = onMessageArrived;
-    
-    mqttClient.connect({
-      onSuccess: onConnect,
-      useSSL: true
-    });
+    connectMQTT();
   } catch (e) { console.error("MQTT Error:", e); }
 
   function onConnect() {
@@ -202,9 +251,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (res.errorCode !== 0) {
       console.log("MQTT Terputus. Reconnecting...");
       setSensorOffline('TERPUTUS'); // Panggil fungsi redup saat putus
-      setTimeout(() => { mqttClient.connect({ onSuccess: onConnect, useSSL: true }); }, 5000);
+      setTimeout(connectMQTT, 5000);
     }
   }
+
+  // Deteksi alat berhenti mengirim walau koneksi broker masih hidup
+  setInterval(() => {
+    if (isSensorOnline && lastLiveMsgTime > 0 && Date.now() - lastLiveMsgTime > STALE_MS) {
+      setSensorOnline('BASI');
+      document.querySelectorAll('.ctrl-card').forEach(card => { card.style.opacity = '0.6'; });
+      if (window.currentSelectedSensor) window.selectSensor(window.currentSelectedSensor);
+    }
+  }, 30000);
 
   // 9. Tangkap Data MQTT & Update Kartu Utama dan Kecil
   function onMessageArrived(message) {
@@ -217,20 +275,64 @@ document.addEventListener('DOMContentLoaded', () => {
     if (topic === mainTopic) {
       const dataArray = payload.split(',');
       
-      // Format Baru Arduino:
+      // Format Arduino v2.1 (12 field):
       // Index: 0=tanggal, 1=waktu, 2=rad, 3=suhu, 4=rh, 5=pres, 6=rain, 7=wind, 8=windMax, 9=arah(°), 10=mataAngin, 11=flag
+      // Flag 4 huruf: [Radiasi][Suhu+RH][Tekanan][Hujan], V = valid, S = gagal/stale
       if (dataArray.length >= 11) {
-        
-        // Panggil fungsi nyala (LIVE) karena data berhasil masuk
-        setSensorOnline(); 
 
-        const valRad  = parseFloat(dataArray[2]);
-        const valTemp = parseFloat(dataArray[3]);
-        const valHum  = parseFloat(dataArray[4]);
-        const valPres = parseFloat(dataArray[5]);
-        const valRain = parseFloat(dataArray[6]);
-        const valWind = parseFloat(dataArray[7]);
-        const valDir  = parseFloat(dataArray[9]);
+        // Pesan retained = data terakhir yang disimpan broker (mungkin sudah lama)
+        if (message.retained) {
+          setSensorOnline('TERAKHIR');
+          console.log(`Data retained dari alat: ${dataArray[0]} ${dataArray[1]}`);
+        } else {
+          setSensorOnline('LIVE');
+          lastLiveMsgTime = Date.now();
+        }
+
+        const flag = (dataArray[11] || 'VVVV').trim();
+        const ok = (i) => flag.charAt(i) !== 'S';
+
+        const valRad  = nilaiSensor(dataArray[2], ok(0));
+        const valTemp = nilaiSensor(dataArray[3], ok(1));
+        const valHum  = nilaiSensor(dataArray[4], ok(1));
+        const valPres = nilaiSensor(dataArray[5], ok(2));
+        const valRain = nilaiSensor(dataArray[6], ok(3));
+        const valWind = nilaiSensor(dataArray[7], true);
+        const valDir  = nilaiSensor(dataArray[9], true);
+
+        // Field PM (firmware v2.2+): 12 = PM2.5, 13 = PM10, flag huruf ke-5
+        const adaPM = dataArray.length >= 14;
+        const valPM25 = adaPM ? nilaiSensor(dataArray[12], ok(4)) : NaN;
+        const valPM10 = adaPM ? nilaiSensor(dataArray[13], ok(4)) : NaN;
+        [['pm25', valPM25], ['pm10', valPM10]].forEach(([jenis, v]) => {
+          const card = document.getElementById(`val-${jenis}-card`);
+          const dial = document.getElementById(`dial-${jenis}`);
+          const cat  = document.getElementById(`cat-${jenis}-card`);
+          if (!adaPM) {            // firmware lama tanpa SPS30
+            window.globalSensorData[jenis] = null;
+            if (card) card.innerHTML = `-- <small ${smallStyle}>tidak ada sensor</small>`;
+            if (cat) cat.innerText = '';
+            return;
+          }
+          if (isNaN(v)) {
+            window.globalSensorData[jenis] = null;
+            tampilkanError(`val-${jenis}-card`);
+            if (cat) cat.innerText = '';
+            return;
+          }
+          window.globalSensorData[jenis] = v;
+          const k = kategoriISPU(jenis, v);
+          const skala = jenis === 'pm25' ? 250 : 420;
+          if (card) card.innerHTML = `${v.toFixed(1)} <small ${smallStyle}>µg/m³</small>`;
+          if (dial) dial.style.strokeDashoffset = circleLen - Math.min(v / skala, 1) * circleLen;
+          if (cat) { cat.innerText = k.singkat; cat.style.color = k.warna; }
+        });
+
+        if (isNaN(valRad))  tampilkanError('val-rad-card');
+        if (isNaN(valTemp)) tampilkanError('val-temp-card');
+        if (isNaN(valHum))  tampilkanError('val-hum-card');
+        if (isNaN(valPres)) tampilkanError('val-pres-card');
+        if (isNaN(valRain)) tampilkanError('val-rain-card');
 
         if (!isNaN(valTemp)) {
           window.globalSensorData.temp = valTemp;
@@ -337,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function fetchSatelliteData(lat, lon) {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,wind_direction_10m,shortwave_radiation,precipitation`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,wind_direction_10m,shortwave_radiation,precipitation&wind_speed_unit=ms`; // m/s agar setara dengan anemometer
     fetch(url).then(res => res.json()).then(data => {
         if (data && data.current) {
           const d = data.current;
@@ -352,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
           if (satTemp) satTemp.innerHTML = `${d.temperature_2m}<small style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">°C</small>`;
           if (satHum) satHum.innerHTML = `${d.relative_humidity_2m}<small style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">%</small>`;
-          if (satWindSpeed) satWindSpeed.innerHTML = `${d.wind_speed_10m}<small style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">km/h</small>`;
+          if (satWindSpeed) satWindSpeed.innerHTML = `${d.wind_speed_10m}<small style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">m/s</small>`;
           if (satWindDir) satWindDir.innerHTML = `${d.wind_direction_10m}<small style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">°</small>`;
           if (satRad) satRad.innerHTML = `${d.shortwave_radiation}<small style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">W/m²</small>`;
           if (satPres) satPres.innerHTML = `${d.surface_pressure}<small style="font-size: 11px; font-weight: 400; color: var(--text-secondary); margin-left:2px;">hPa</small>`;
@@ -457,6 +559,29 @@ document.addEventListener('DOMContentLoaded', () => {
       dialSvg.style.strokeDashoffset = 440 - (data.windDirDeg / 360) * 440;
       updateScale('U', 'T', 'S', 'B', '0°', '360°');
       updateBadge(data.windDirText, '#4cc9f0', 'rgba(76,201,240,0.15)');
+    } else if (type === 'pm25' || type === 'pm10') {
+      const v = data[type];
+      const label = type === 'pm25' ? 'Partikulat PM2.5' : 'Partikulat PM10';
+      const warna = type === 'pm25' ? '#ff7b54' : '#c77dff';
+      const skala = type === 'pm25' ? 250 : 420;
+      dialP.innerText = label;
+      dialSvg.style.stroke = warna;
+      if (masterIcon) {
+        masterIcon.innerHTML = `<i class="ph-fill ${type === 'pm25' ? 'ph-circles-three' : 'ph-dots-nine'}"></i>`;
+        masterIcon.style.color = warna;
+      }
+      if (type === 'pm25') updateScale('0', '62.5', '125', '187.5', '0', '250');
+      else updateScale('0', '105', '210', '315', '0', '420');
+      if (v === null || v === undefined) {
+        dialH2.innerHTML = `--<span>µg/m³</span>`;
+        dialSvg.style.strokeDashoffset = 440;
+        updateBadge('TIDAK ADA DATA', 'var(--text-secondary)', 'rgba(255,255,255,0.05)');
+      } else {
+        dialH2.innerHTML = `${v.toFixed(1)}<span>µg/m³</span>`;
+        dialSvg.style.strokeDashoffset = 440 - Math.min(v / skala, 1) * 440;
+        const k = kategoriISPU(type, v);
+        updateBadge(k.nama, k.warna, 'rgba(255,255,255,0.08)');
+      }
     } else if (type === 'rain') {
       dialH2.innerHTML = `${(data.rain || 0).toFixed(1)}<span>mm</span>`; dialP.innerText = 'Curah Hujan';
       dialSvg.style.stroke = '#4cc9f0';

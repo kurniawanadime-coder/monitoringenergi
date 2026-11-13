@@ -59,7 +59,7 @@
         </div>
 
         <!-- Satellite Data Grid (Replaced Radiasi Matahari Chart) -->
-        <div class="card sat-container" style="margin-top: 15px;">
+        <div class="card sat-container" style="margin-top: 15px; flex-shrink: 0;">
           <div class="card-header"
             style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
             <h3 style="font-size: 16px; font-weight: 600; margin: 0;">Data Satelit</h3>
@@ -171,7 +171,7 @@
 
         <!-- Analisis Akurasi (Delta) -->
         <div class="card delta-card"
-          style="margin-top: auto; background: linear-gradient(145deg, rgba(30,30,45,0.9), rgba(20,20,30,0.9)); border-left: 3px solid var(--accent-pink);">
+          style="margin-top: auto; background: linear-gradient(145deg, rgba(30,30,45,0.9), rgba(20,20,30,0.9)); border-left: 3px solid var(--accent-pink); flex-shrink: 0;">
           <div class="card-header"
             style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
             <h3 style="font-size: 16px; font-weight: 600; margin: 0; display: flex; align-items: center; gap: 8px;">
@@ -475,7 +475,7 @@
           <div class="controller-grid">
 
             <!-- Sensor 1: Radiasi -->
-            <div class="ctrl-card active" onclick="selectSensor('rad')" style="cursor: pointer; grid-column: span 3;">
+            <div class="ctrl-card active" onclick="selectSensor('rad')" style="cursor: pointer;">
               <div class="ctrl-head">
                 <span class="status" style="color: #ffb703;">LIVE</span>
               </div>
@@ -496,6 +496,61 @@
                 style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: -0.5px;">850
                 <small
                   style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">W/m²</small>
+              </p>
+            </div>
+
+
+            <!-- Sensor 1b: Partikulat PM2.5 (SPS30) -->
+            <div class="ctrl-card" onclick="selectSensor('pm25')" style="cursor: pointer;">
+              <div class="ctrl-head">
+                <span class="status" style="color: #ff7b54;">LIVE</span>
+                <span style="font-weight: 700; font-size: 9px; color: #ff7b54;" id="cat-pm25-card"></span>
+              </div>
+              <div class="ctrl-icon-wrap" style="position: relative; width: 36px; height: 36px; margin-bottom: 4px;">
+                <svg viewBox="0 0 36 36"
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="#ff7b54" stroke-width="2" stroke-dasharray="106.81"
+                    stroke-dashoffset="106.81" id="dial-pm25" style="transition: stroke-dashoffset 1s ease;"
+                    stroke-linecap="round" />
+                </svg>
+                <div class="ctrl-icon"
+                  style="margin: 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #ff7b54;">
+                  <i class="ph-fill ph-circles-three"></i>
+                </div>
+              </div>
+              <h4>Partikulat PM2.5</h4>
+              <p id="val-pm25-card"
+                style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: -0.5px;">--
+                <small
+                  style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">µg/m³</small>
+              </p>
+            </div>
+
+            <!-- Sensor 1c: Partikulat PM10 (SPS30) -->
+            <div class="ctrl-card" onclick="selectSensor('pm10')" style="cursor: pointer;">
+              <div class="ctrl-head">
+                <span class="status" style="color: #c77dff;">LIVE</span>
+                <span style="font-weight: 700; font-size: 9px; color: #c77dff;" id="cat-pm10-card"></span>
+              </div>
+              <div class="ctrl-icon-wrap" style="position: relative; width: 36px; height: 36px; margin-bottom: 4px;">
+                <svg viewBox="0 0 36 36"
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg);">
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+                  <circle cx="18" cy="18" r="17" fill="none" stroke="#c77dff" stroke-width="2" stroke-dasharray="106.81"
+                    stroke-dashoffset="106.81" id="dial-pm10" style="transition: stroke-dashoffset 1s ease;"
+                    stroke-linecap="round" />
+                </svg>
+                <div class="ctrl-icon"
+                  style="margin: 0; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #c77dff;">
+                  <i class="ph-fill ph-dots-nine"></i>
+                </div>
+              </div>
+              <h4>Partikulat PM10</h4>
+              <p id="val-pm10-card"
+                style="font-size: 16px; font-weight: 700; color: #fff; margin-top: 2px; letter-spacing: -0.5px;">--
+                <small
+                  style="font-weight: 400; color: var(--text-secondary); font-size: 10px; letter-spacing: 0;">µg/m³</small>
               </p>
             </div>
 
