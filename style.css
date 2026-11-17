@@ -12,7 +12,116 @@
   --accent-yellow: #fb8500;
   --glass-blur: blur(16px);
   --font-main: 'Inter', sans-serif;
+
+  /* ---- Variabel tema (mode gelap = bawaan) ---- */
+  --latar-gradien-1: rgba(114, 9, 183, 0.15);
+  --latar-gradien-2: rgba(76, 201, 240, 0.15);
+  --kotak-bg: rgba(20, 20, 30, 0.6);
+  --kotak-bayang: 0 25px 50px rgba(0, 0, 0, 0.5);
+  --sidebar-bg: rgba(15, 15, 25, 0.8);
+  --sidebar-bg-pekat: rgba(15, 15, 25, 0.96);
+  --kartu-bayang: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --kartu-kecil-bayang: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+  --lembut-1: rgba(255, 255, 255, 0.03);
+  --lembut-2: rgba(255, 255, 255, 0.05);
+  --lembut-3: rgba(255, 255, 255, 0.10);
+  --lembut-4: rgba(255, 255, 255, 0.20);
+  --cekung: rgba(0, 0, 0, 0.10);
+  --garis: rgba(255, 255, 255, 0.10);
+  --garis-tipis: rgba(255, 255, 255, 0.05);
+  --teks-isi: #d8d8e2;
+  --teks-daftar: #e6e6ee;
+  --dialog-bg: #171722;
+  --toggle-bg: #2a2a35;
+  --toggle-tombol: #5a5a6b;
+  --pil-bg: rgba(0, 0, 0, 0.4);
+  --pil-aktif-bg: #ffffff;
+  --pil-aktif-teks: #000000;
+  --kondisi-tirai: linear-gradient(to right, rgba(10, 10, 18, 0.88), rgba(10, 10, 18, 0.55));
+  --gambar-opasitas: 0.35;
+  --risiko-bg: rgba(30, 30, 45, 0.6);
+  --deviasi-bg: linear-gradient(145deg, rgba(30, 30, 45, 0.9), rgba(20, 20, 30, 0.9));
+  --avatar-bg: #2a2a35;
+  --skema-kontrol: dark;
+
+  /* Warna aksen untuk teks dan ikon (versi pekat dipakai di mode terang) */
+  --hijau: #06d6a0;
+  --merah-muda: #f72585;
+  --biru: #4cc9f0;
+  --kuning: #ffb703;
+  --hijau-daun: #a7c957;
+  --ungu: #7209b7;
+  --ungu-terang: #8b5cf6;
+  --oranye: #ff7b54;
+  --ungu-muda: #c77dff;
+  --jingga: #fca311;
+
+  /* Warna grafik (dibaca script lewat window.TEMA) */
+  --grafik-teks: #8b8b9b;
+  --grafik-garis: rgba(255, 255, 255, 0.05);
+  --grafik-legenda: #c7c7d1;
 }
+
+/* ================= MODE TERANG ================= */
+html[data-tema="terang"] {
+  --bg-color: #eef1f6;
+  --panel-bg: rgba(255, 255, 255, 0.92);
+  --panel-border: rgba(15, 23, 42, 0.09);
+  --text-primary: #161a23;
+  --text-secondary: #5b6275;
+  --accent-purple: #7e22ce;
+  --accent-blue: #0284c7;
+  --accent-pink: #db2777;
+  --accent-orange: #d97706;
+  --accent-green: #059669;
+  --accent-yellow: #ea580c;
+
+  --latar-gradien-1: rgba(126, 34, 206, 0.07);
+  --latar-gradien-2: rgba(2, 132, 199, 0.08);
+  --kotak-bg: rgba(248, 250, 252, 0.85);
+  --kotak-bayang: 0 20px 50px rgba(15, 23, 42, 0.10);
+  --sidebar-bg: #ffffff;
+  --sidebar-bg-pekat: rgba(255, 255, 255, 0.97);
+  --kartu-bayang: 0 4px 18px 0 rgba(15, 23, 42, 0.06);
+  --kartu-kecil-bayang: 0 2px 8px 0 rgba(15, 23, 42, 0.05);
+  --lembut-1: rgba(15, 23, 42, 0.035);
+  --lembut-2: rgba(15, 23, 42, 0.05);
+  --lembut-3: rgba(15, 23, 42, 0.08);
+  --lembut-4: rgba(15, 23, 42, 0.14);
+  --cekung: rgba(15, 23, 42, 0.04);
+  --garis: rgba(15, 23, 42, 0.12);
+  --garis-tipis: rgba(15, 23, 42, 0.07);
+  --teks-isi: #3b4252;
+  --teks-daftar: #2a2f3a;
+  --dialog-bg: #ffffff;
+  --toggle-bg: #e2e6ee;
+  --toggle-tombol: #9aa3b2;
+  --pil-bg: rgba(15, 23, 42, 0.06);
+  --pil-aktif-bg: #161a23;
+  --pil-aktif-teks: #ffffff;
+  --kondisi-tirai: linear-gradient(to right, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.80));
+  --gambar-opasitas: 0.55;
+  --risiko-bg: #ffffff;
+  --deviasi-bg: #ffffff;
+  --avatar-bg: #fff7e6;
+  --skema-kontrol: light;
+
+  --hijau: #059669;
+  --merah-muda: #db2777;
+  --biru: #0284c7;
+  --kuning: #b45309;
+  --hijau-daun: #4d7c0f;
+  --ungu: #7e22ce;
+  --ungu-terang: #7c3aed;
+  --oranye: #c2410c;
+  --ungu-muda: #9333ea;
+  --jingga: #c2410c;
+
+  --grafik-teks: #5b6275;
+  --grafik-garis: rgba(15, 23, 42, 0.07);
+  --grafik-legenda: #3b4252;
+}
+html { color-scheme: var(--skema-kontrol); }
 
 * {
   box-sizing: border-box;
@@ -23,8 +132,8 @@
 body {
   background-color: var(--bg-color);
   background-image: 
-    radial-gradient(circle at 15% 50%, rgba(114, 9, 183, 0.15), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(76, 201, 240, 0.15), transparent 25%);
+    radial-gradient(circle at 15% 50%, var(--latar-gradien-1), transparent 25%),
+    radial-gradient(circle at 85% 30%, var(--latar-gradien-2), transparent 25%);
   color: var(--text-primary);
   font-family: var(--font-main);
   min-height: 100vh;
@@ -51,20 +160,20 @@ body {
   /* Membuat dashboard tetap di tengah layar (vertikal & horizontal) jika layar komputer besar */
   margin: auto; 
   
-  background: rgba(20, 20, 30, 0.6);
+  background: var(--kotak-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--panel-border);
   border-radius: 30px;
   display: flex;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+  box-shadow: var(--kotak-bayang);
   overflow: hidden;
 }
 
 /* Sidebar */
 .sidebar {
   width: 80px;
-  background: rgba(15, 15, 25, 0.8);
+  background: var(--sidebar-bg);
   border-right: 1px solid var(--panel-border);
   display: flex;
   flex-direction: column;
@@ -84,7 +193,7 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #2a2a35;
+  background: var(--avatar-bg);
   border: 2px solid var(--accent-orange);
   margin-bottom: 8px;
 }
@@ -174,7 +283,7 @@ body {
   padding: 15px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: var(--kartu-bayang);
 }
 
 /* COLUMN 1 */
@@ -236,14 +345,14 @@ body {
 }
 .arrow-btn {
   margin-left: auto;
-  background: rgba(255,255,255,0.1);
+  background: var(--lembut-3);
   padding: 8px;
   border-radius: 50%;
   font-size: 14px;
   cursor: pointer;
   backdrop-filter: blur(4px);
 }
-.arrow-btn:hover { background: rgba(255,255,255,0.2); }
+.arrow-btn:hover { background: var(--lembut-4); }
 
 
 /* COLUMN 2: Weather Main */
@@ -253,7 +362,7 @@ body {
   align-items: center;
 }
 .date {
-  background: rgba(255,255,255,0.05);
+  background: var(--lembut-2);
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 12px;
@@ -275,12 +384,12 @@ body {
 .forecast-item {
   display: flex;
   align-items: center;
-  background: rgba(255,255,255,0.03);
+  background: var(--lembut-1);
   padding: 8px 12px;
   border-radius: 10px;
   transition: 0.3s;
 }
-.forecast-item:hover { background: rgba(255,255,255,0.08); }
+.forecast-item:hover { background: var(--lembut-3); }
 .f-icon { font-size: 20px; margin-right: 12px; color: var(--accent-blue); }
 .f-desc { flex: 1; }
 .f-desc span { font-size: 14px; font-weight: 500; }
@@ -324,16 +433,16 @@ body {
 .toggle-switch label {
   position: absolute; cursor: pointer;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #2a2a35;
+  background-color: var(--toggle-bg);
   transition: .4s;
   border-radius: 34px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid var(--garis);
 }
 .toggle-switch label:before {
   position: absolute; content: "";
   height: 18px; width: 18px;
   left: 3px; bottom: 2px;
-  background-color: #5a5a6b;
+  background-color: var(--toggle-tombol);
   transition: .4s;
   border-radius: 50%;
 }
@@ -365,7 +474,7 @@ body {
 .scale-marker {
   position: absolute;
   font-size: 9px;
-  color: #fff;
+  color: var(--text-primary);
   font-weight: 500;
   opacity: 0.9;
 }
@@ -410,7 +519,7 @@ body {
   align-items: center;
   text-align: center;
   transition: 0.3s;
-  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: var(--kartu-kecil-bayang);
 }
 .ctrl-card.active { background: linear-gradient(135deg, rgba(167,201,87,0.2) 0%, rgba(167,201,87,0.05) 100%); border-color: rgba(167,201,87,0.3); }
 .ctrl-card.green { background: linear-gradient(135deg, rgba(6,214,160,0.2) 0%, rgba(6,214,160,0.05) 100%); }
@@ -454,7 +563,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 8px 15px;
-  background: rgba(30,30,45, 0.6);
+  background: var(--risiko-bg);
   border: 1px solid var(--panel-border);
   margin-bottom: 8px;
 }
@@ -480,7 +589,7 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 2px dashed rgba(255,255,255,0.2);
+  border: 2px dashed var(--lembut-4);
   animation: spin-reactor 10s linear infinite;
 }
 .drought-risk-card.danger .reactor-core {
@@ -526,115 +635,407 @@ body {
 
 
 /* ========================================================
-   MEDIA QUERIES - PEROMBAKAN TOTAL UNTUK LAYAR RESPONSIF 
+   TATA LETAK MENYESUAIKAN LAYAR (v3.1)
+   Mode dipilih oleh tata-letak.js lewat kelas pada <html>:
+   - .mode-app  : laptop, monitor, tablet mendatar. Kanvas pas satu layar.
+   - .mode-alir : HP dan tablet tegak. Kartu tersusun dan halaman di-scroll.
    ======================================================== */
 
-/* 1. Mode Tablet & Laptop Kecil (Dibawah 1200px) */
-@media (max-width: 1200px) {
-  .dashboard-container { 
-    height: auto; 
-    min-height: 90vh; 
-    max-height: none; /* KUNCI 1: Hapus batas maksimal tinggi 750px */
-    overflow: visible; /* Izinkan elemen menembus batas kotak */
-  }
-  .main-grid {
-    grid-template-columns: 1fr 1fr;
-    height: auto;
-    overflow: visible; 
-  }
-  .col { height: auto; }
-  
-  .col:nth-child(3) {
-    grid-column: span 2;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-top: 15px;
-  }
-  .header-right { grid-column: span 2; }
-  .controller-section { min-height: auto; }
+/* ---------- MODE APP: pas satu layar, tanpa scroll ---------- */
+html.mode-app, html.mode-app body {
+  height: 100%;
+  overflow: hidden;
+}
+html.mode-app body {
+  display: block;
+  padding: 0;
+}
+html.mode-app .dashboard-container {
+  /* ukuran, posisi, dan skala diatur tata-letak.js */
+  position: fixed;
+  width: 1240px;
+  height: 760px;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  transform-origin: 0 0;
+}
+html.mode-app .main-grid {
+  height: 100%;
+  min-height: 0;
+  grid-template-columns: minmax(310px, 24%) minmax(0, 1fr) minmax(330px, 26%);
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+}
+html.mode-app .col {
+  height: 100%;
+  min-height: 0;
+  /* cadangan: bila suatu saat isi kolom tetap lebih tinggi, kolom itu sendiri yang bisa di-scroll */
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+html.mode-app .col::-webkit-scrollbar { display: none; }
+html.mode-app .sunpath-card { min-height: 200px; }
+/* Halaman selain beranda mengisi tinggi kanvas dan di-scroll di dalamnya */
+html.mode-app #page-history,
+html.mode-app .cmp-page {
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+}
+/* Kartu di halaman yang di-scroll tidak boleh ikut mengecil (isinya akan terpotong) */
+html.mode-app #page-history > *,
+html.mode-app .cmp-page > * { flex-shrink: 0; }
+html.mode-app #page-history .controller-grid,
+html.mode-app .cmp-page .controller-grid { flex: 0 0 auto; }
+
+/* ---------- MODE ALIR: tablet tegak dan HP ---------- */
+html.mode-alir body {
+  display: block;
+  padding: 0;
+  overflow-x: hidden;
+}
+html.mode-alir .dashboard-container {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  min-height: 100vh;
+  max-height: none;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  flex-direction: column;
+  overflow: visible;
 }
 
-/* 2. Mode Mobile & Smartphone (Dibawah 768px) */
-@media (max-width: 768px) {
-  
-  /* --- KUNCI MUTLAK UNTUK MEMAKSA SCROLL DI HP --- */
-  html, body {
-    height: auto !important;
-    min-height: 100vh !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    padding: 0 !important; 
-    display: block !important; 
+/* Menu samping menjadi bilah atas yang tetap terlihat saat halaman di-scroll */
+html.mode-alir .sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  height: auto;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 16px;
+  gap: 12px;
+  border-right: none;
+  border-bottom: 1px solid var(--panel-border);
+  background: var(--sidebar-bg-pekat);
+}
+html.mode-alir .profile { margin-bottom: 0; flex-direction: row; gap: 10px; }
+html.mode-alir .stasiun-lambang { width: 34px; height: 34px; font-size: 17px; margin-bottom: 0; }
+html.mode-alir .nav-links { flex-direction: row; width: auto; margin-left: auto; gap: 4px; }
+html.mode-alir .nav-links li { width: 44px; height: 44px; font-size: 22px; }
+html.mode-alir .nav-links li.active::before {
+  top: auto;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  border-radius: 4px 4px 0 0;
+}
+
+/* Tablet tegak: dua kolom, kolom sensor melebar di bawah */
+html.mode-alir .main-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  height: auto;
+  overflow: visible;
+  padding: 16px;
+}
+html.mode-alir .col { height: auto; min-height: 0; }
+html.mode-alir .col-3 {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+html.mode-alir .col-3 .drought-risk-card { grid-column: span 2; margin-bottom: 0; }
+html.mode-alir .col-3 .header-right { grid-column: span 2; }
+html.mode-alir .controller-section { min-height: auto; }
+html.mode-alir .controller-grid { gap: 8px; }
+html.mode-alir .ctrl-card { padding: 10px 6px; }
+html.mode-alir .delta-card { margin-top: 0 !important; }
+html.mode-alir .sunpath-card { min-height: 300px; }
+html.mode-alir #page-history,
+html.mode-alir .cmp-page { grid-column: 1 / -1; }
+
+/* HP: satu kolom */
+@media (max-width: 760px) {
+  html.mode-alir .main-grid {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 12px;
+    gap: 12px;
+    padding-bottom: 40px;
   }
-  /* ----------------------------------------------- */
-  
-  .dashboard-container {
-    width: 100vw;
-    max-width: 100%;
-    height: auto;
-    min-height: 100vh;
-    max-height: none;
-    border-radius: 0;
-    border: none;
-    flex-direction: column;
-    margin: 0;
-    overflow: visible;
-  }
-  
-  /* ... (Kodingan ke bawahnya biarkan tetap sama seperti sebelumnya) ... */
-  
-  .sidebar {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    padding: 15px;
-    justify-content: space-between;
-    border-right: none;
-    border-bottom: 1px solid var(--panel-border);
-  }
-  .profile { margin-bottom: 0; flex-direction: row; gap: 10px; }
-  .avatar { width: 35px; height: 35px; margin-bottom: 0; }
-  .nav-links { flex-direction: row; width: auto; gap: 15px; justify-content: center;}
-  .nav-links li { height: auto; padding: 5px; font-size: 22px; }
-  
-  .nav-links li.active::before {
-    top: auto; 
-    bottom: -8px; 
-    left: 50%; 
-    transform: translateX(-50%);
-    width: 20px; 
-    height: 3px; 
-    border-radius: 4px 4px 0 0;
-  }
-  
-  .main-grid {
-    grid-template-columns: 1fr;
-    height: auto;
-    overflow: visible;
-    padding: 15px;
-    padding-bottom: 60px; /* Tambahan ruang kosong di bawah agar indikator tidak tertutup layar HP */
-  }
-  
-  .col:nth-child(3) {
+  html.mode-alir .col-3 {
     grid-column: span 1;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
   }
-  .header-right { grid-column: span 1; margin-top: 20px;}
-  
- /* -- BLOK PERBAIKAN PIXEL PERFECT GRID HP -- */
-  .controller-grid { 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 8px; /* Memberi ruang napas antar kartu */
+  html.mode-alir .col-3 .drought-risk-card,
+  html.mode-alir .col-3 .header-right { grid-column: span 1; }
+  html.mode-alir .controller-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  html.mode-alir .controller-grid .ctrl-card:first-child { grid-column: span 2; }
+  html.mode-alir .card { border-radius: 16px; }
+  html.mode-alir .sunpath-card { min-height: 280px; }
+  html.mode-alir .username { display: none; }
+  html.mode-alir .nav-links li { width: 42px; }
+
+  /* Halaman riwayat satelit di HP */
+  html.mode-alir #page-history > .card:first-child {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 14px;
   }
-  
-  /* Memaksa kartu Radiasi Matahari mematuhi aturan 2 kolom di HP */
-  .controller-grid .ctrl-card:first-child {
-    grid-column: span 2 !important; 
-  }
-  
-  /* Memperbaiki proporsi sentuhan (touch target) di layar HP */
-  .ctrl-card {
-    padding: 10px 5px;
-  }
-  /* ------------------------------------------ */
+  html.mode-alir #page-history .controller-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  html.mode-alir #page-history .controller-grid .ctrl-card:first-child { grid-column: span 1; }
+  html.mode-alir #page-history .ctrl-card { padding: 12px 4px !important; }
+  html.mode-alir #page-history .ctrl-card h4 { font-size: 12px !important; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+  /* Urutan kartu di HP: kondisi terkini dulu, rincian sesudahnya */
+  html.mode-alir .col,
+  html.mode-alir .col-3 { display: contents; }
+  html.mode-alir .image-card { order: 1; }
+  html.mode-alir .weather-main-card { order: 2; }
+  html.mode-alir .drought-risk-card { order: 3; }
+  html.mode-alir .header-right { order: 4; }
+  html.mode-alir .dial-card { order: 5; }
+  html.mode-alir .controller-section { order: 6; }
+  html.mode-alir .sat-container { order: 7; margin-top: 0 !important; }
+  html.mode-alir .delta-card { order: 8; }
+  html.mode-alir .sunpath-card { order: 9; }
+}
+@media (max-width: 380px) {
+  html.mode-alir .nav-links { gap: 0; }
+  html.mode-alir .nav-links li { width: 40px; font-size: 20px; }
+  html.mode-alir .sidebar { padding: 8px 10px; }
+}
+
+/* Lambang stasiun di atas menu samping */
+.stasiun-lambang {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--accent-orange);
+  background: rgba(255, 183, 3, 0.12);
+  border: 2px solid var(--accent-orange);
+  margin-bottom: 8px;
+}
+.nav-links li:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: -4px;
+  border-radius: 10px;
+}
+
+/* --- v3: rincian risiko kekeringan energi & catatan potensi --- */
+.drought-info small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--text-secondary);
+}
+.potensi-catatan {
+  margin-top: 15px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* --- v3: halaman perbandingan sensor dan satelit --- */
+.cmp-page { width: 100%; grid-column: 1 / -1; flex-direction: column; gap: 16px; }
+.cmp-kepala { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.cmp-kepala h2 { margin: 0; font-size: 20px; }
+.cmp-kepala p { margin: 6px 0 0; color: var(--text-secondary); font-size: 12px; line-height: 1.5; max-width: 72ch; }
+.cmp-kontrol { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.cmp-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.cmp-tombol {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-radius: 6px; border: 1px solid var(--garis);
+  background: var(--lembut-2); color: var(--text-primary);
+  font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.cmp-tombol:hover { background: var(--lembut-3); }
+.cmp-tombol:focus-visible, .cmp-file:focus-visible + .cmp-tombol, .cmp-tanggal input:focus-visible,
+.cmp-param .ctrl-card:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+.cmp-tombol-utama { background: var(--accent-pink); border-color: transparent; color: #fff; }
+.cmp-tombol-utama:hover { background: #ff3d97; }
+.cmp-tombol-jalan { background: #06d6a0; border-color: transparent; color: #06241c; }
+.cmp-tombol-jalan:hover { background: #2ee6b5; }
+.cmp-tanggal { display: flex; flex-direction: column; gap: 5px; }
+.cmp-tanggal label { font-size: 11px; color: var(--text-secondary); }
+.cmp-tanggal input {
+  background: var(--lembut-2); border: 1px solid var(--garis); color: var(--text-primary);
+  padding: 8px; border-radius: 6px; font-family: inherit; font-size: 13px; color-scheme: var(--skema-kontrol);
+}
+.cmp-status { font-size: 12px; line-height: 1.5; color: var(--text-secondary); }
+.cmp-param { grid-template-columns: repeat(5, 1fr); margin-top: 0; }
+.cmp-param .ctrl-card { cursor: pointer; display: flex; justify-content: center; align-items: center; padding: 14px; }
+.cmp-param h4 { margin: 0; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+.cmp-kosong { padding: 36px 20px; text-align: center; color: var(--text-secondary); font-size: 13px; }
+.cmp-hasil { grid-template-columns: 1fr 1fr; gap: 16px; }
+.cmp-angka { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+.cmp-kartu { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.cmp-kartu > span { font-size: 11px; color: var(--text-secondary); }
+.cmp-kartu strong { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; font-variant-numeric: tabular-nums; }
+.cmp-kartu em { font-style: normal; font-size: 12px; font-weight: 400; color: var(--text-secondary); letter-spacing: 0; }
+.cmp-kartu small { font-size: 11px; color: var(--text-secondary); line-height: 1.35; }
+.cmp-grafik { padding: 20px; }
+.cmp-grafik h3 { margin: 0 0 14px; font-size: 14px; font-weight: 600; }
+.cmp-lebar { grid-column: 1 / -1; }
+.cmp-kanvas { width: 100%; height: 300px; position: relative; }
+.cmp-tabel { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.cmp-tabel th { text-align: right; font-weight: 500; font-size: 11px; color: var(--text-secondary); padding: 6px 8px; border-bottom: 1px solid var(--garis); }
+.cmp-tabel td { text-align: right; padding: 9px 8px; border-bottom: 1px solid var(--garis-tipis); }
+.cmp-tabel th:first-child, .cmp-tabel td:first-child { text-align: left; }
+.cmp-redup { color: var(--text-secondary); font-size: 11px; }
+.cmp-catatan { margin: 14px 0 0; font-size: 11px; line-height: 1.5; color: var(--text-secondary); }
+@media (max-width: 900px) {
+  .cmp-hasil { grid-template-columns: 1fr; }
+  .cmp-angka { grid-template-columns: repeat(2, 1fr); }
+  .cmp-param { grid-template-columns: repeat(2, 1fr); }
+}
+
+.cmp-param .ctrl-card { opacity: 1 !important; }
+
+/* --- v3: panel Kondisi stasiun (menempati kartu gambar di kolom kiri) --- */
+.image-card { align-items: stretch; }
+.image-card .bg-image { opacity: var(--gambar-opasitas); }
+.kondisi-panel {
+  position: relative; z-index: 2; width: 100%; height: 100%;
+  padding: 12px 14px; display: flex; flex-direction: column; gap: 6px;
+  background: var(--kondisi-tirai);
+  text-align: left;
+}
+.kondisi-kepala { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.kondisi-kepala h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.kondisi-kepala span { font-size: 11px; font-weight: 600; }
+#kondisi-daftar {
+  list-style: none; margin: 0; padding: 0; overflow-y: auto; flex: 1;
+  display: flex; flex-direction: column; gap: 4px; scrollbar-width: thin;
+}
+#kondisi-daftar li {
+  font-size: 11.5px; line-height: 1.35; color: var(--teks-daftar);
+  padding-left: 12px; position: relative;
+}
+#kondisi-daftar li::before {
+  content: ""; position: absolute; left: 0; top: 0.45em;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--warna-butir, #06d6a0);
+}
+#kondisi-daftar li.kondisi-normal { color: var(--text-secondary); }
+
+/* --- v3: halaman pemantauan harian --- */
+.hr-rentang { display: flex; gap: 6px; }
+.cmp-tombol.aktif { background: var(--accent-blue); border-color: transparent; color: #06202b; }
+.hr-kanvas { width: 100%; height: 200px; position: relative; }
+.hr-gulir { overflow-x: auto; }
+
+/* --- v3: dialog lokasi alat --- */
+.w-location:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 2px; }
+.lokasi-dialog {
+  width: min(440px, 92vw); padding: 0; border: 1px solid var(--garis);
+  border-radius: 14px; background: var(--dialog-bg); color: var(--text-primary);
+  margin: auto;   /* reset global menghapus margin bawaan dialog, jadi ditengahkan lagi */
+}
+.lokasi-dialog::backdrop { background: rgba(5,5,10,0.65); }
+.lokasi-dialog form { padding: 22px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.lokasi-dialog h2 { margin: 0; font-size: 18px; }
+.lokasi-dialog p { margin: 0 0 6px; font-size: 12px; line-height: 1.5; color: var(--text-secondary); }
+.lokasi-dialog label { font-size: 11px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+.lokasi-dialog input {
+  width: 100%; box-sizing: border-box; padding: 9px 10px; border-radius: 6px;
+  border: 1px solid var(--garis); background: var(--lembut-2);
+  color: var(--text-primary); font-family: inherit; font-size: 14px;
+}
+.lokasi-dialog input:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 1px; }
+.lokasi-baris { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+.lokasi-dialog small { font-size: 11px; line-height: 1.4; color: var(--text-secondary); }
+.lokasi-dialog .cmp-tombol { align-self: flex-start; margin-top: 4px; }
+.lokasi-pesan { min-height: 16px; font-size: 12px; line-height: 1.4; color: #ffb703; }
+.lokasi-aksi { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.lokasi-aksi span { flex: 1; }
+.lokasi-aksi .cmp-tombol { margin-top: 0; }
+
+/* --- v3.1: halaman Tentang stasiun --- */
+.tentang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.tentang-teks { font-size: 13px; line-height: 1.6; margin: 0 0 10px; }
+.tentang-daftar { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: var(--teks-isi); }
+.tentang-daftar li + li { margin-top: 6px; }
+.tentang-tabel td, .tentang-tabel th { text-align: left !important; }
+.tentang-tabel td:last-child { color: var(--text-secondary); }
+.tentang-rumus { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 10px 20px; font-size: 13px; line-height: 1.55; }
+.tentang-rumus dt { font-weight: 600; }
+.tentang-rumus dd { margin: 0; color: var(--teks-isi); max-width: 75ch; }
+@media (max-width: 760px) {
+  .tentang-grid { grid-template-columns: 1fr; }
+  .tentang-rumus { grid-template-columns: 1fr; gap: 2px; }
+  .tentang-rumus dd { margin-bottom: 10px; }
+}
+@media (max-width: 760px) {
+  /* Tabel "Yang diukur" ditumpuk per baris agar tidak terpotong di layar sempit */
+  .tentang-tabel thead { display: none; }
+  .tentang-tabel, .tentang-tabel tbody, .tentang-tabel tr, .tentang-tabel td { display: block; width: 100%; }
+  .tentang-tabel tr { padding: 10px 0; border-bottom: 1px solid var(--garis-tipis); }
+  .tentang-tabel td { border: none !important; padding: 1px 0 !important; }
+  .tentang-tabel td:first-child { font-weight: 600; }
+  .tentang-tabel td:nth-child(3)::before { content: "Satuan: "; color: var(--text-secondary); }
+}
+
+/* --- v3.2: tombol ganti mode gelap / terang --- */
+.tombol-tema {
+  margin-top: auto;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background 0.2s;
+}
+.tombol-tema:hover { color: var(--accent-orange); background: var(--lembut-2); }
+.tombol-tema:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
+html.mode-alir .tombol-tema { margin-top: 0; margin-left: 4px; }
+/* Teks pada tombol berwarna tetap putih di kedua mode */
+.tombol-teks-putih { color: #fff !important; }
+
+/* Garis putih tipis pada ikon SVG menjadi abu-abu di mode terang */
+html[data-tema="terang"] [stroke="rgba(255,255,255,0.1)"],
+html[data-tema="terang"] [stroke="rgba(255,255,255,0.05)"],
+html[data-tema="terang"] [stroke="rgba(255,255,255,0.06)"] { stroke: var(--garis); }
+html[data-tema="terang"] #sun-arc-progress { stroke: var(--text-primary); }
+html[data-tema="terang"] .sidebar { border-right-color: var(--panel-border); }
+html[data-tema="terang"] .card { backdrop-filter: none; -webkit-backdrop-filter: none; }
+html[data-tema="terang"] .cmp-tombol.aktif { color: #ffffff; }
+html[data-tema="terang"] .cmp-tombol-jalan { background: var(--hijau); color: #ffffff; }
+/* Awan hiasan di kartu cuaca dibuat lebih samar di atas latar putih */
+html[data-tema="terang"] .w-main-content > .ph-cloud { opacity: 0.04 !important; }
+html[data-tema="terang"] .ctrl-card.active { background: rgba(132, 204, 22, 0.14); border-color: rgba(77, 124, 15, 0.35); }
+html[data-tema="terang"] .ctrl-card.green { background: rgba(5, 150, 105, 0.10); }
+
+/* --- v3.3: tombol satuan suhu --- */
+.pil-satuan {
+  padding: 2px 10px;
+  font-size: 11px;
+  font-family: inherit;
+  border: none;
+  border-radius: 16px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.pil-satuan.aktif { background: var(--pil-aktif-bg); color: var(--pil-aktif-teks); font-weight: 600; }
+.pil-satuan:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 1px; }
